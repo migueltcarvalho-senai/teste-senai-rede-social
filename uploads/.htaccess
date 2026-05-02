@@ -1,0 +1,8 @@
+# Bloqueia listagem de arquivos da pasta de uploads
+Options -Indexes
+
+# Bloqueia execução de arquivos PHP dentro da pasta de uploads (segurança)
+<FilesMatch "\.php$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
