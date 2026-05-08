@@ -33,7 +33,7 @@ if (!empty($_SESSION['usuario_id'])) {
     <div class="login-card">
 
         <!-- Nome do aplicativo -->
-        <h1 class="login-logo">InstaSenai</h1>
+        <h1 class="login-logo">SenaiDex</h1>
 
         <!-- Subtítulo -->
         <p class="login-subtitle">

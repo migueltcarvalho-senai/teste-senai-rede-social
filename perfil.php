@@ -54,8 +54,8 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@<?= htmlspecialchars($perfil['nick']) ?> · InstaSenai</title>
-    <meta name="description" content="Veja as fotos de <?= htmlspecialchars($perfil['nome']) ?> no InstaSenai.">
+    <title>@<?= htmlspecialchars($perfil['nick']) ?> · SenaiDex</title>
+    <meta name="description" content="Veja as fotos de <?= htmlspecialchars($perfil['nome']) ?> no SenaiDex.">
 
     <!-- Fonte moderna -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +63,6 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
 
     <!-- Link com o CSS -->
     <link rel="stylesheet" href="css/perfil.css">
-
 </head>
 
 <body>
@@ -79,14 +78,19 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
 
     <!-- Navbar fixa -->
     <nav class="navbar">
-        <a href="index.php" class="navbar-logo">InstaSenai</a>
-        <div class="navbar-user">
-            <!-- Nick do usuário logado leva ao próprio perfil -->
-            <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="nick-link">
-                @<?= htmlspecialchars($_SESSION['usuario_nick']) ?>
-            </a>
-            <a href="auth/logout.php" class="sair-link">Sair</a>
-        </div>
+        <!-- Logo à esquerda -->
+        <a href="index.php" class="navbar-logo-img">
+            <img src="icon/logo.webp" alt="SenaiDex Logo">
+        </a>
+
+        <!-- Título central com fonte Capuche Trial -->
+        <span class="navbar-brand">SenaiDex</span>
+
+        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
+        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
+            aria-label="Meu perfil">
+            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
+        </a>
     </nav>
 
     <div class="page-wrap">
@@ -103,7 +107,7 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
 
                 <!-- Nome texturizado em destaque -->
                 <div class="perfil-nome-wrap">
-                    <span class="perfil-nick">@<?= htmlspecialchars($perfil['nick']) ?></span>
+                    <span class="perfil-nick"><?= htmlspecialchars($perfil['nick']) ?></span>
                     <span class="perfil-nome"><?= htmlspecialchars($perfil['nome']) ?></span>
                 </div>
 
@@ -121,6 +125,12 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
                 </p>
 
             </div>
+
+            <!-- Botão Sair (visível apenas no próprio perfil) -->
+            <?php if ($ehProprioUsuario): ?>
+                <a href="auth/logout.php" class="perfil-sair-btn">Sair</a>
+            <?php endif; ?>
+
         </header>
 
         <!-- ===== GRID DE POSTS ===== -->
@@ -153,9 +163,9 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
                     $dataEsc = htmlspecialchars($dataFormatada, ENT_QUOTES);
                     ?>
                     <article class="grid-item" role="button" tabindex="0"
-                        aria-label="Ver publicação de <?= htmlspecialchars($perfil['nick']) ?>" data-foto="<?= $fotoEsc ?>"
-                        data-descricao="<?= $descEsc ?>" data-data="<?= $dataEsc ?>" onclick="abrirModal(this)"
-                        onkeydown="if(event.key==='Enter') abrirModal(this)">
+                        aria-label="Ver publicação de <?= htmlspecialchars($perfil['nick']) ?>" data-id="<?= $post['id'] ?>"
+                        data-foto="<?= $fotoEsc ?>" data-descricao="<?= $descEsc ?>" data-data="<?= $dataEsc ?>"
+                        onclick="abrirModal(this)" onkeydown="if(event.key==='Enter') abrirModal(this)">
                         <!-- Foto em miniatura -->
                         <img src="<?= htmlspecialchars($post['caminho_foto']) ?>"
                             alt="Publicação de <?= htmlspecialchars($perfil['nick']) ?> em <?= $dataFormatada ?>"
@@ -189,12 +199,19 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
             <!-- Informações da publicação -->
             <div class="modal-info">
 
-                <!-- Cabeçalho: avatar + nick -->
+                <!-- Cabeçalho: avatar + nick + lixeira (só para o dono) -->
                 <div class="modal-header">
                     <div class="modal-avatar" aria-hidden="true">
                         <?= strtoupper(substr($perfil['nick'], 0, 1)) ?>
                     </div>
                     <span class="modal-nick">@<?= htmlspecialchars($perfil['nick']) ?></span>
+
+                    <?php if ($ehProprioUsuario): ?>
+                    <button class="modal-trash-btn" id="modal-trash-btn"
+                        onclick="deletarPost()" aria-label="Excluir publicação" title="Excluir">
+                        <img src="icon/trash.webp" alt="Excluir">
+                    </button>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Descrição da publicação -->
@@ -222,6 +239,9 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
         const modalDescricao = document.getElementById('modal-descricao-texto');
         const modalData = document.getElementById('modal-data');
 
+        // ID do post atualmente aberto no modal
+        let postIdAtual = null;
+
         /**
          * Abre o modal com os dados do post clicado.
          * Os dados vêm dos atributos data-* do elemento do grid.
@@ -229,10 +249,17 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
          * @param {HTMLElement} el - O article.grid-item clicado
          */
         function abrirModal(el) {
+            // Guarda o ID do post para uso no botão de exclusão
+            postIdAtual = el.dataset.id;
+
             // Preenche o modal com os dados do post clicado
             modalFoto.src = el.dataset.foto;
             modalDescricao.textContent = el.dataset.descricao;
             modalData.textContent = el.dataset.data;
+
+            // Guarda referência ao grid-item para removê-lo após exclusão
+            modalBackdrop.dataset.gridItem = el;
+            modalBackdrop._gridItem = el;
 
             // Abre o modal com a classe CSS
             modalBackdrop.classList.add('aberto');
@@ -250,6 +277,34 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
 
             // Limpa a src da foto para não mostrar a imagem anterior ao reabrir
             setTimeout(() => { modalFoto.src = ''; }, 200);
+            postIdAtual = null;
+        }
+
+        /**
+         * Envia requisição para excluir o post atual.
+         * Confirma com o usuário antes de executar.
+         */
+        function deletarPost() {
+            if (!postIdAtual) return;
+            if (!confirm('Tem certeza que deseja excluir esta publicação? Esta ação não pode ser desfeita.')) return;
+
+            const formData = new FormData();
+            formData.append('post_id', postIdAtual);
+
+            fetch('api/deletar_post.php', { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(dados => {
+                    if (dados.sucesso) {
+                        // Remove o item do grid visualmente
+                        if (modalBackdrop._gridItem) {
+                            modalBackdrop._gridItem.remove();
+                        }
+                        fecharModal();
+                    } else {
+                        alert('Erro ao excluir: ' + (dados.erro || 'Tente novamente.'));
+                    }
+                })
+                .catch(() => alert('Erro de conexão. Tente novamente.'));
         }
 
         /**

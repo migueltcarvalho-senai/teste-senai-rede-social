@@ -58,16 +58,25 @@ try {
 
     <!-- Link com o CSS -->
     <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
 
     <!-- Barra de navegação fixa no topo -->
     <nav class="navbar">
-        <a href="index.php" class="navbar-logo">InstaSenai</a>
-        <div class="navbar-user">
-            <!-- Nick do usuário logado leva ao próprio perfil -->
-            <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>"
-                style="color:#262626;font-weight:600;text-decoration:none;">@<?= htmlspecialchars($_SESSION['usuario_nick']) ?></a>
-            <a href="auth/logout.php">Sair</a>
-        </div>
+        <!-- Logo à esquerda -->
+        <a href="index.php" class="navbar-logo-img">
+            <img src="icon/logo.webp" alt="SenaiDex Logo">
+        </a>
+
+        <!-- Título central com fonte Capuche Trial -->
+        <span class="navbar-brand">SenaiDex</span>
+
+        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
+        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
+            aria-label="Meu perfil">
+            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
+        </a>
     </nav>
 
     <!-- Layout principal centralizado -->
@@ -228,6 +237,6 @@ try {
         observador.observe(loadingIndicator);
     </script>
 
-    </body>
+</body>
 
 </html>
