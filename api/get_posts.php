@@ -51,7 +51,31 @@ try {
         // Formata a data no padrão brasileiro
         $dataFormatada = date('d/m/Y', strtotime($post['data_criacao']));
 
-        // Cada post é um bloco de HTML com foto, nome do usuário e legenda
+        // Bloco de compartilhar: gerado apenas para os posts do próprio usuário logado.
+        // A comparação usa $_SESSION['usuario_nick'] que já está disponível via app.php.
+        $blocoShare = '';
+        if ($post['nick_usuario'] === $_SESSION['usuario_nick']) {
+            $urlPerfil  = 'http://' . $_SERVER['HTTP_HOST'] . '/teste-senai-rede-social/perfil.php?nick=' . urlencode($post['nick_usuario']);
+            $descEsc    = htmlspecialchars($post['descricao'], ENT_QUOTES);
+            $urlEsc     = htmlspecialchars($urlPerfil, ENT_QUOTES);
+            $blocoShare = '
+            <div class="post-actions">
+                <button
+                    class="btn-share"
+                    onclick="compartilhar(this)"
+                    data-texto="' . $descEsc . '"
+                    data-foto="'  . htmlspecialchars($post['caminho_foto'], ENT_QUOTES) . '"
+                    data-nick="'  . htmlspecialchars($post['nick_usuario'], ENT_QUOTES) . '"
+                    data-url="'   . $urlEsc  . '"
+                    title="Compartilhar este post"
+                >
+                    <span class="share-icon">&#8679;</span>
+                    <span class="share-label">Compartilhar</span>
+                </button>
+            </div>';
+        }
+
+        // Cada post é um bloco de HTML com foto, nome do usuário, legenda e (se for o autor) botão de share
         $html .= '
         <article class="post-card">
             <div class="post-header">
@@ -80,6 +104,7 @@ try {
                     ' . htmlspecialchars($post['descricao']) . '
                 </p>
             </div>
+            ' . $blocoShare . '
         </article>';
     }
 

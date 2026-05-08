@@ -59,6 +59,43 @@ try {
     <!-- Link com o CSS -->
     <link rel="stylesheet" href="css/index.css">
 
+    <style>
+        /* Rodapé de ações do post: abriga o botão de compartilhar */
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 8px 12px 4px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* Botão de compartilhar — ícone genérico ↑ para testes */
+        .btn-share {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            color: #8e8e8e;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: color 0.15s ease, background 0.15s ease;
+        }
+
+        .btn-share:hover {
+            color: #262626;
+            background: #f5f5f5;
+        }
+
+        /* Ícone de seta para cima — símbolo genérico de compartilhar */
+        .btn-share .share-icon {
+            font-size: 1rem;
+            line-height: 1;
+        }
+    </style>
+
     <!-- Barra de navegação fixa no topo -->
     <nav class="navbar">
         <a href="index.php" class="navbar-logo">InstaSenai</a>
@@ -126,6 +163,21 @@ try {
                                 </p>
                             </div>
 
+                            <?php if ($post['nick_usuario'] === $_SESSION['usuario_nick']): ?>
+                                <!-- Botão de compartilhar: visível APENAS para o autor do post -->
+                                <div class="post-actions">
+                                    <button class="btn-share" onclick="compartilhar(this)"
+                                        data-texto="<?= htmlspecialchars($post['descricao'], ENT_QUOTES) ?>"
+                                        data-foto="<?= htmlspecialchars($post['caminho_foto'], ENT_QUOTES) ?>"
+                                        data-nick="<?= htmlspecialchars($post['nick_usuario'], ENT_QUOTES) ?>"
+                                        data-url="<?= htmlspecialchars('http://' . $_SERVER['HTTP_HOST'] . '/teste-senai-rede-social/perfil.php?nick=' . urlencode($post['nick_usuario']), ENT_QUOTES) ?>"
+                                        title="Compartilhar este post">
+                                        <span class="share-icon">&#8679;</span>
+                                        <span class="share-label">Compartilhar</span>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
                         </article>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -160,6 +212,9 @@ try {
 
         // Controle para não fazer requisições duplicadas ao mesmo tempo
         let carregando = false;
+
+        // Nick do usuário logado (injetado pelo PHP para comparação no JS dos posts AJAX)
+        const nickLogado = '<?= addslashes($_SESSION['usuario_nick']) ?>';
 
         // Indica se ainda tem mais posts para buscar
         let temMaisPosts = <?= $temMais ? 'true' : 'false' ?>;
@@ -226,6 +281,182 @@ try {
 
         // Começa a observar o indicador de carregamento
         observador.observe(loadingIndicator);
+
+        /**
+         * Abre o diálogo nativo de compartilhamento do sistema (Web Share API).
+         *
+         * POR QUE USAR files:[] ?
+         * Passar apenas {title, text, url} faz o share sheet mostrar apenas apps
+         * de mensagens (WhatsApp, SMS, e-mail). Para que o Instagram (e outros
+         * apps de foto) apareçam no share sheet do sistema, é obrigatório
+         * incluir um arquivo de imagem no campo files:[].
+         *
+         * COMO FUNCIONA:
+         * 1. Busca a imagem do post como Blob via fetch()
+         * 2. Cria um File a partir do Blob (nome + tipo MIME)
+         * 3. Verifica se o dispositivo suporta compartilhar aquele arquivo
+         * 4. Chama navigator.share({ files, text, url })
+         * 5. O usuário escolhe o Instagram no share sheet nativo
+         * 6. Dentro do Instagram, ele escolhe: Stories, Feed ou DM
+         *
+         * NOTA: não é possível forçar "Stories" ou "Feed" via web —
+         * isso é decidido dentro do app pelo usuário.
+            /**
+         * Gera uma imagem com overlay de hashtags/menções via Canvas API
+         * e a compartilha via Web Share API.
+         *
+         * FLUXO:
+         *  1. Carrega a foto original num elemento <img> temporário
+         *  2. Cria um <canvas> offscreen com as mesmas dimensões
+         *  3. Desenha a foto original no canvas
+         *  4. Desenha um gradiente escuro no rodapé (para o texto ficar legível)
+         *  5. Escreve o nick (@autor), a descrição e as hashtags sobre o gradiente
+         *  6. Exporta o canvas como Blob JPEG
+         *  7. Compartilha via navigator.share({ files: [File] })
+         *
+         * RESULTADO:
+         *  - Instagram Stories/Feed: a imagem já chega com o texto visível ✅
+         *  - WhatsApp / Telegram:    imagem + texto no campo de mensagem ✅
+         *  - Desktop (fallback):     compartilha texto + URL sem arquivo ✅
+         *
+         * @param {HTMLElement} btn - O botão .btn-share clicado
+         */
+        async function compartilhar(btn) {
+            const texto       = btn.dataset.texto || '';
+            const url         = btn.dataset.url   || window.location.href;
+            const caminhoFoto = btn.dataset.foto   || '';
+            const nick        = btn.dataset.nick   || '';
+
+            if (!navigator.share) {
+                alert('Seu navegador não suporta compartilhamento nativo.\nCopie o link: ' + url);
+                return;
+            }
+
+            // Feedback visual
+            const label         = btn.querySelector('.share-label');
+            const textoOriginal = label ? label.textContent : 'Compartilhar';
+            btn.disabled = true;
+            if (label) label.textContent = 'Gerando imagem...';
+
+            try {
+                // ── 1. Carrega a imagem original ──────────────────────────────
+                const imagemOriginal = await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    // crossOrigin necessário para poder desenhar no canvas sem "tainted"
+                    img.crossOrigin = 'anonymous';
+                    img.onload  = () => resolve(img);
+                    img.onerror = () => reject(new Error('Não foi possível carregar a imagem.'));
+                    img.src = caminhoFoto;
+                });
+
+                // ── 2. Cria canvas com as dimensões da imagem ─────────────────
+                const canvas  = document.createElement('canvas');
+                const largura = imagemOriginal.naturalWidth  || imagemOriginal.width;
+                const altura  = imagemOriginal.naturalHeight || imagemOriginal.height;
+                canvas.width  = largura;
+                canvas.height = altura;
+                const ctx = canvas.getContext('2d');
+
+                // ── 3. Desenha a foto original ────────────────────────────────
+                ctx.drawImage(imagemOriginal, 0, 0, largura, altura);
+
+                // ── 4. Gradiente escuro no rodapé (legibilidade do texto) ─────
+                // Altura da faixa: 28% da imagem ou 180px, o que for menor
+                const alturaFaixa = Math.min(Math.round(altura * 0.28), 180);
+                const gradiente   = ctx.createLinearGradient(0, altura - alturaFaixa, 0, altura);
+                gradiente.addColorStop(0,   'rgba(0,0,0,0)');
+                gradiente.addColorStop(0.4, 'rgba(0,0,0,0.55)');
+                gradiente.addColorStop(1,   'rgba(0,0,0,0.82)');
+                ctx.fillStyle = gradiente;
+                ctx.fillRect(0, altura - alturaFaixa, largura, alturaFaixa);
+
+                // ── 5. Configurações de texto ─────────────────────────────────
+                const padding     = Math.round(largura * 0.04); // 4% das bordas
+                const tamBase     = Math.max(18, Math.round(largura * 0.042)); // tamanho dinâmico
+
+                // Sombra para garantir leitura em qualquer fundo
+                ctx.shadowColor   = 'rgba(0,0,0,0.7)';
+                ctx.shadowBlur    = 6;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
+                // ── 5a. Nick do autor (@instaSenai) ──────────────────────────
+                ctx.fillStyle = '#ffffff';
+                ctx.font      = `bold ${tamBase}px Inter, Arial, sans-serif`;
+                ctx.textAlign = 'left';
+                const nickTexto = nick ? '@' + nick : '@InstaSenai';
+                ctx.fillText(nickTexto, padding, altura - alturaFaixa + Math.round(tamBase * 1.6));
+
+                // ── 5b. Descrição do post (truncada se longa) ─────────────────
+                if (texto) {
+                    const tamDesc  = Math.round(tamBase * 0.82);
+                    ctx.font       = `${tamDesc}px Inter, Arial, sans-serif`;
+                    ctx.fillStyle  = 'rgba(255,255,255,0.92)';
+
+                    // Trunca a descrição para caber em uma linha
+                    const maxLargTexto = largura - padding * 2;
+                    let descTruncada   = texto;
+                    while (ctx.measureText(descTruncada).width > maxLargTexto && descTruncada.length > 10) {
+                        descTruncada = descTruncada.slice(0, -4) + '...';
+                    }
+                    ctx.fillText(descTruncada, padding, altura - alturaFaixa + Math.round(tamBase * 3.0));
+                }
+
+                // ── 5c. Hashtags fixas no rodapé ──────────────────────────────
+                const tamHash  = Math.round(tamBase * 0.75);
+                ctx.font       = `bold ${tamHash}px Inter, Arial, sans-serif`;
+                ctx.fillStyle  = 'rgba(180,220,255,0.95)'; // azul claro para destacar
+                ctx.fillText('#InstaSenai #SENAI', padding, altura - padding);
+
+                // Remove sombra para não afetar outros desenhos
+                ctx.shadowColor = 'transparent';
+
+                // ── 6. Exporta canvas como JPEG (qualidade 90%) ───────────────
+                if (label) label.textContent = 'Compartilhando...';
+                const blobGerado = await new Promise((resolve, reject) => {
+                    canvas.toBlob(
+                        (b) => b ? resolve(b) : reject(new Error('Falha ao gerar imagem.')),
+                        'image/jpeg',
+                        0.9
+                    );
+                });
+
+                const arquivoGerado = new File(
+                    [blobGerado],
+                    'instaSenai_post.jpg',
+                    { type: 'image/jpeg' }
+                );
+
+                // ── 7. Compartilha via Web Share API ──────────────────────────
+                const hashtags    = '#InstaSenai #SENAI';
+                const textoShare  = texto ? hashtags + ' ' + texto : hashtags;
+
+                const dadosShare = {
+                    files: [arquivoGerado], // imagem com overlay embutido
+                    text:  textoShare,      // pre-preenche WhatsApp / Telegram / SMS
+                    url:   url
+                };
+
+                if (navigator.canShare && navigator.canShare(dadosShare)) {
+                    await navigator.share(dadosShare);
+                } else {
+                    // Fallback: sem arquivo (desktop ou navegador sem suporte a files)
+                    await navigator.share({ title: 'InstaSenai', text: textoShare, url: url });
+                }
+
+            } catch (erro) {
+                if (erro.name !== 'AbortError') {
+                    console.warn('Erro ao compartilhar:', erro);
+                    // Fallback seguro: texto + URL sem imagem
+                    try {
+                        await navigator.share({ title: 'InstaSenai', text: texto, url: url });
+                    } catch (_) { /* usuário cancelou */ }
+                }
+            } finally {
+                btn.disabled = false;
+                if (label) label.textContent = textoOriginal;
+            }
+        }
     </script>
 
     </body>
