@@ -7,6 +7,7 @@ exigirLogin();
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,298 +18,11 @@ exigirLogin();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        /* ===== RESET E BASE ===== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <!-- Link com o CSS -->
+    <link rel="stylesheet" href="css/nova_postagem.css">
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #fafafa;
-            color: #262626;
-        }
-
-        /* ===== NAVBAR FIXA ===== */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background: #ffffff;
-            border-bottom: 1px solid #dbdbdb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            height: 54px;
-        }
-
-        .navbar-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #262626;
-        }
-
-        .navbar a {
-            font-size: 0.85rem;
-            color: #8e8e8e;
-            text-decoration: none;
-        }
-
-        .navbar a:hover {
-            color: #262626;
-        }
-
-        /* ===== CONTAINER PRINCIPAL ===== */
-        .container {
-            padding-top: 70px;
-            max-width: 470px;
-            margin: 0 auto;
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: 40px;
-        }
-
-        /* ===== ESTÁGIOS DA POSTAGEM ===== */
-        /* Estágio 1: câmera | Estágio 2: legenda */
-        .estagio {
-            display: none;
-        }
-
-        .estagio.ativo {
-            display: block;
-        }
-
-        /* ===== ESTÁGIO 1: CÂMERA ===== */
-        .camera-wrap {
-            margin: 24px 0 16px;
-            position: relative;
-            background: #000;
-            border-radius: 4px;
-            overflow: hidden;
-            /* Proporção quadrada como o Instagram */
-            aspect-ratio: 1 / 1;
-        }
-
-        /* Preview da câmera ao vivo */
-        #video-camera {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            /* Espelha a câmera frontal para ficar mais natural */
-            transform: scaleX(-1);
-        }
-
-        /* Foto capturada (fica por cima do vídeo) */
-        #canvas-foto {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none; /* Aparece só depois de capturar */
-        }
-
-        /* Botão de captura: círculo branco no centro inferior */
-        .btn-capturar {
-            display: block;
-            margin: 0 auto 16px;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 4px solid #262626;
-            background: #ffffff;
-            cursor: pointer;
-            transition: background 0.15s ease, transform 0.1s ease;
-            position: relative;
-        }
-
-        .btn-capturar::after {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            border-radius: 50%;
-            background: #262626;
-            transition: background 0.15s ease;
-        }
-
-        .btn-capturar:hover::after {
-            background: #555;
-        }
-
-        .btn-capturar:active {
-            transform: scale(0.95);
-        }
-
-        /* Instruções abaixo da câmera */
-        .camera-instrucao {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #8e8e8e;
-            margin-bottom: 16px;
-        }
-
-        /* Botão para usar a foto capturada */
-        .btn-usar-foto {
-            display: none; /* Aparece só depois de capturar */
-            width: 100%;
-            padding: 12px;
-            background: #262626;
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s ease;
-            margin-bottom: 12px;
-        }
-
-        .btn-usar-foto:hover {
-            background: #444;
-        }
-
-        /* Botão para tirar outra foto */
-        .btn-tirar-outra {
-            display: none; /* Aparece só depois de capturar */
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: #262626;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .btn-tirar-outra:hover {
-            background: #f5f5f5;
-        }
-
-        /* Mensagem de erro se a câmera não abrir */
-        .camera-erro {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 4px;
-            padding: 16px;
-            font-size: 0.875rem;
-            color: #856404;
-            margin: 24px 0;
-            text-align: center;
-            display: none;
-        }
-
-        /* ===== ESTÁGIO 2: LEGENDA ===== */
-        /* Preview da foto capturada no estágio 2 */
-        .preview-legenda-foto {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            border-radius: 4px;
-            display: block;
-            margin: 24px 0 16px;
-            background: #f0f0f0;
-        }
-
-        /* Campo de texto da legenda */
-        .campo-legenda {
-            width: 100%;
-            min-height: 100px;
-            padding: 12px;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: #262626;
-            resize: vertical;
-            margin-bottom: 16px;
-            outline: none;
-            transition: border-color 0.15s ease;
-        }
-
-        .campo-legenda:focus {
-            border-color: #a0a0a0;
-        }
-
-        .campo-legenda::placeholder {
-            color: #c7c7c7;
-        }
-
-        /* Botão de publicar */
-        .btn-publicar {
-            width: 100%;
-            padding: 12px;
-            background: #0095f6; /* Azul do Instagram */
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.15s ease;
-            margin-bottom: 12px;
-        }
-
-        .btn-publicar:hover {
-            background: #1aa1f8;
-        }
-
-        .btn-publicar:disabled {
-            background: #b3d9fc;
-            cursor: not-allowed;
-        }
-
-        /* Botão de voltar para câmera */
-        .btn-voltar-camera {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: #262626;
-            border: 1px solid #dbdbdb;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.15s ease;
-        }
-
-        .btn-voltar-camera:hover {
-            background: #f5f5f5;
-        }
-
-        /* Mensagem de status ao publicar */
-        .status-msg {
-            text-align: center;
-            font-size: 0.85rem;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .status-msg.erro {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffc107;
-        }
-
-        .status-msg.sucesso {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-    </style>
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -358,12 +72,8 @@ exigirLogin();
             <img id="preview-foto" class="preview-legenda-foto" src="" alt="Foto capturada">
 
             <!-- Campo para escrever a legenda -->
-            <textarea
-                id="campo-legenda"
-                class="campo-legenda"
-                placeholder="Escreva uma legenda..."
-                maxlength="255"
-            ></textarea>
+            <textarea id="campo-legenda" class="campo-legenda" placeholder="Escreva uma legenda..."
+                maxlength="255"></textarea>
 
             <!-- Mensagem de status (erro ou sucesso) -->
             <div class="status-msg" id="status-msg"></div>
@@ -390,19 +100,19 @@ exigirLogin();
          */
 
         // Referências aos elementos do DOM que vamos usar
-        const videoCamera    = document.getElementById('video-camera');
-        const canvasFoto     = document.getElementById('canvas-foto');
-        const btnCapturar    = document.getElementById('btn-capturar');
-        const btnUsarFoto    = document.getElementById('btn-usar-foto');
-        const btnTirarOutra  = document.getElementById('btn-tirar-outra');
-        const cameraErro     = document.getElementById('camera-erro');
+        const videoCamera = document.getElementById('video-camera');
+        const canvasFoto = document.getElementById('canvas-foto');
+        const btnCapturar = document.getElementById('btn-capturar');
+        const btnUsarFoto = document.getElementById('btn-usar-foto');
+        const btnTirarOutra = document.getElementById('btn-tirar-outra');
+        const cameraErro = document.getElementById('camera-erro');
         const cameraInstrucao = document.getElementById('camera-instrucao');
-        const estagioCamera  = document.getElementById('estagio-camera');
+        const estagioCamera = document.getElementById('estagio-camera');
         const estagioLegenda = document.getElementById('estagio-legenda');
-        const previewFoto    = document.getElementById('preview-foto');
-        const campoLegenda   = document.getElementById('campo-legenda');
-        const statusMsg      = document.getElementById('status-msg');
-        const btnPublicar    = document.getElementById('btn-publicar');
+        const previewFoto = document.getElementById('preview-foto');
+        const campoLegenda = document.getElementById('campo-legenda');
+        const statusMsg = document.getElementById('status-msg');
+        const btnPublicar = document.getElementById('btn-publicar');
 
         // Guarda o stream da câmera para poder parar depois
         let streamCamera = null;
@@ -420,7 +130,7 @@ exigirLogin();
                 streamCamera = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user', // Câmera frontal
-                        width:  { ideal: 720 },
+                        width: { ideal: 720 },
                         height: { ideal: 720 }
                     },
                     audio: false // Não precisamos de áudio
@@ -445,7 +155,7 @@ exigirLogin();
          */
         function capturarFoto() {
             // Define o tamanho do canvas igual ao vídeo
-            canvasFoto.width  = videoCamera.videoWidth;
+            canvasFoto.width = videoCamera.videoWidth;
             canvasFoto.height = videoCamera.videoHeight;
 
             const ctx = canvasFoto.getContext('2d');
@@ -471,8 +181,8 @@ exigirLogin();
 
             // Mostra os botões de ação e atualiza instrução
             cameraInstrucao.textContent = 'Gostou? Use esta foto ou tire outra.';
-            btnCapturar.style.display   = 'none';
-            btnUsarFoto.style.display   = 'block';
+            btnCapturar.style.display = 'none';
+            btnUsarFoto.style.display = 'block';
             btnTirarOutra.style.display = 'block';
         }
 
@@ -506,8 +216,8 @@ exigirLogin();
 
             // Restaura os botões e instrução
             cameraInstrucao.textContent = 'Clique no botão abaixo para capturar a foto';
-            btnCapturar.style.display   = 'block';
-            btnUsarFoto.style.display   = 'none';
+            btnCapturar.style.display = 'block';
+            btnUsarFoto.style.display = 'none';
             btnTirarOutra.style.display = 'none';
         }
 
@@ -537,8 +247,8 @@ exigirLogin();
             }
 
             // Desativa o botão durante o envio para evitar duplo clique
-            btnPublicar.disabled     = true;
-            btnPublicar.textContent  = 'Publicando...';
+            btnPublicar.disabled = true;
+            btnPublicar.textContent = 'Publicando...';
 
             // Monta os dados para enviar ao servidor
             const formData = new FormData();
@@ -550,26 +260,26 @@ exigirLogin();
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(dados => {
-                if (dados.sucesso) {
-                    // Sucesso: redireciona para o feed
-                    mostrarStatus('Post publicado! Redirecionando...', 'sucesso');
-                    setTimeout(() => {
-                        window.location.href = 'index.php';
-                    }, 1200);
-                } else {
-                    // Erro: mostra a mensagem e reativa o botão
-                    mostrarStatus(dados.erro || 'Erro ao publicar. Tente novamente.', 'erro');
-                    btnPublicar.disabled    = false;
+                .then(res => res.json())
+                .then(dados => {
+                    if (dados.sucesso) {
+                        // Sucesso: redireciona para o feed
+                        mostrarStatus('Post publicado! Redirecionando...', 'sucesso');
+                        setTimeout(() => {
+                            window.location.href = 'index.php';
+                        }, 1200);
+                    } else {
+                        // Erro: mostra a mensagem e reativa o botão
+                        mostrarStatus(dados.erro || 'Erro ao publicar. Tente novamente.', 'erro');
+                        btnPublicar.disabled = false;
+                        btnPublicar.textContent = 'Compartilhar';
+                    }
+                })
+                .catch(() => {
+                    mostrarStatus('Erro de conexão. Tente novamente.', 'erro');
+                    btnPublicar.disabled = false;
                     btnPublicar.textContent = 'Compartilhar';
-                }
-            })
-            .catch(() => {
-                mostrarStatus('Erro de conexão. Tente novamente.', 'erro');
-                btnPublicar.disabled    = false;
-                btnPublicar.textContent = 'Compartilhar';
-            });
+                });
         }
 
         /**
@@ -578,9 +288,9 @@ exigirLogin();
          * @param {string} tipo - 'erro' ou 'sucesso'
          */
         function mostrarStatus(mensagem, tipo) {
-            statusMsg.textContent    = mensagem;
-            statusMsg.className      = 'status-msg ' + tipo;
-            statusMsg.style.display  = 'block';
+            statusMsg.textContent = mensagem;
+            statusMsg.className = 'status-msg ' + tipo;
+            statusMsg.style.display = 'block';
         }
 
         // ===== EVENTOS DOS BOTÕES =====
@@ -595,7 +305,7 @@ exigirLogin();
         btnTirarOutra.addEventListener('click', tirarOutraFoto);
 
         // Para a câmera quando o usuário sai da página (evita vazamento de memória)
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             if (streamCamera) {
                 streamCamera.getTracks().forEach(track => track.stop());
             }
@@ -606,4 +316,5 @@ exigirLogin();
     </script>
 
 </body>
+
 </html>

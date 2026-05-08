@@ -1,0 +1,95 @@
+/* ===== RESET E BASE ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #262626;
+}
+
+/* ===== CARD DE LOGIN ===== */
+.login-card {
+    background: #ffffff;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    padding: 40px 40px 32px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+}
+
+/* Logo / Nome do app */
+.login-logo {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 32px;
+    color: #262626;
+}
+
+/* Linha divisória "ou" */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: #8e8e8e;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #dbdbdb;
+}
+
+/* Texto de boas-vindas */
+.login-subtitle {
+    color: #8e8e8e;
+    font-size: 0.875rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* Container do botão renderizado pelo SDK do Google */
+.google-btn-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Mensagem de erro caso algo dê errado */
+.erro-msg {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 0.85rem;
+    color: #856404;
+    margin-top: 16px;
+    display: none;
+}
+
+/* Rodapé do card */
+.login-footer {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #dbdbdb;
+    font-size: 0.8rem;
+    color: #8e8e8e;
+}

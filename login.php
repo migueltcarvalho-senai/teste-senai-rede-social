@@ -10,6 +10,7 @@ if (!empty($_SESSION['usuario_id'])) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,102 +24,10 @@ if (!empty($_SESSION['usuario_id'])) {
     <!-- SDK do Google Identity Services (login com Google) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    <style>
-        /* ===== RESET E BASE ===== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #fafafa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: #262626;
-        }
-
-        /* ===== CARD DE LOGIN ===== */
-        .login-card {
-            background: #ffffff;
-            border: 1px solid #dbdbdb;
-            border-radius: 4px;
-            padding: 40px 40px 32px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-        }
-
-        /* Logo / Nome do app */
-        .login-logo {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 32px;
-            color: #262626;
-        }
-
-        /* Linha divisória "ou" */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 24px 0;
-            color: #8e8e8e;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #dbdbdb;
-        }
-
-        /* Texto de boas-vindas */
-        .login-subtitle {
-            color: #8e8e8e;
-            font-size: 0.875rem;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        /* Container do botão renderizado pelo SDK do Google */
-        .google-btn-wrap {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
-
-        /* Mensagem de erro caso algo dê errado */
-        .erro-msg {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 4px;
-            padding: 10px;
-            font-size: 0.85rem;
-            color: #856404;
-            margin-top: 16px;
-            display: none;
-        }
-
-        /* Rodapé do card */
-        .login-footer {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid #dbdbdb;
-            font-size: 0.8rem;
-            color: #8e8e8e;
-        }
-    </style>
+    <!-- Link com o CSS -->
+    <link rel="stylesheet" href="css/login.css">
 </head>
+
 <body>
 
     <div class="login-card">
@@ -171,11 +80,11 @@ if (!empty($_SESSION['usuario_id'])) {
             google.accounts.id.renderButton(
                 document.getElementById('google-btn-container'),
                 {
-                    type:  'standard',   // botão com texto
+                    type: 'standard',   // botão com texto
                     theme: 'outline',    // borda cinza (combina com o design)
-                    size:  'large',      // altura confortável
+                    size: 'large',      // altura confortável
                     width: 280,          // largura fixa em pixels
-                    text:  'signin_with' // texto: "Fazer login com o Google"
+                    text: 'signin_with' // texto: "Fazer login com o Google"
                 }
             );
         };
@@ -192,21 +101,22 @@ if (!empty($_SESSION['usuario_id'])) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: resposta.credential })
             })
-            .then(res => res.json())
-            .then(dados => {
-                if (dados.sucesso) {
-                    window.location.href = 'index.php';
-                } else {
-                    const erroEl = document.getElementById('erro-msg');
-                    erroEl.textContent  = dados.erro || 'Erro ao autenticar.';
-                    erroEl.style.display = 'block';
-                }
-            })
-            .catch(() => {
-                document.getElementById('erro-msg').style.display = 'block';
-            });
+                .then(res => res.json())
+                .then(dados => {
+                    if (dados.sucesso) {
+                        window.location.href = 'index.php';
+                    } else {
+                        const erroEl = document.getElementById('erro-msg');
+                        erroEl.textContent = dados.erro || 'Erro ao autenticar.';
+                        erroEl.style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('erro-msg').style.display = 'block';
+                });
         }
     </script>
 
 </body>
+
 </html>
