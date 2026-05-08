@@ -20,15 +20,25 @@ exigirLogin();
 
     <!-- Link com o CSS -->
     <link rel="stylesheet" href="css/nova_postagem.css">
-
 </head>
 
 <body>
 
     <!-- Navbar -->
     <nav class="navbar">
-        <span class="navbar-title">Nova postagem</span>
-        <a href="index.php">Cancelar</a>
+        <!-- Logo à esquerda -->
+        <a href="index.php" class="navbar-logo-img">
+            <img src="icon/logo.webp" alt="SenaiDex Logo">
+        </a>
+
+        <!-- Título central com fonte Capuche Trial -->
+        <span class="navbar-brand">SenaiDex</span>
+
+        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
+        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
+            aria-label="Meu perfil">
+            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
+        </a>
     </nav>
 
     <div class="container">
