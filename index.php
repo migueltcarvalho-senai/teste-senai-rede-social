@@ -292,7 +292,8 @@ try {
     <nav class="navbar">
         <a href="index.php" class="navbar-logo">InstaSenai</a>
         <div class="navbar-user">
-            <span>@<?= htmlspecialchars($_SESSION['usuario_nick']) ?></span>
+            <!-- Nick do usuário logado leva ao próprio perfil -->
+            <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" style="color:#262626;font-weight:600;text-decoration:none;">@<?= htmlspecialchars($_SESSION['usuario_nick']) ?></a>
             <a href="auth/logout.php">Sair</a>
         </div>
     </nav>
@@ -324,9 +325,13 @@ try {
 
                             <!-- Cabeçalho: avatar + nome + data -->
                             <div class="post-header">
-                                <div class="post-avatar"><?= $inicial ?></div>
+                                <!-- Avatar clicável leva ao perfil do autor -->
+                                <a href="perfil.php?nick=<?= urlencode($post['nick_usuario']) ?>" style="text-decoration:none;">
+                                    <div class="post-avatar"><?= $inicial ?></div>
+                                </a>
                                 <div class="post-user-info">
-                                    <span class="post-username">@<?= htmlspecialchars($post['nick_usuario']) ?></span>
+                                    <!-- Nick clicável leva ao perfil do autor -->
+                                    <a href="perfil.php?nick=<?= urlencode($post['nick_usuario']) ?>" class="post-username" style="text-decoration:none;color:#262626;">@<?= htmlspecialchars($post['nick_usuario']) ?></a>
                                     <span class="post-date"><?= $dataFormatada ?></span>
                                 </div>
                             </div>
@@ -344,7 +349,8 @@ try {
                             <!-- Legenda -->
                             <div class="post-body">
                                 <p class="post-caption">
-                                    <strong>@<?= htmlspecialchars($post['nick_usuario']) ?></strong>
+                                    <!-- Nick na legenda também é clicável -->
+                                    <a href="perfil.php?nick=<?= urlencode($post['nick_usuario']) ?>" style="font-weight:600;text-decoration:none;color:#262626;">@<?= htmlspecialchars($post['nick_usuario']) ?></a>
                                     <?= htmlspecialchars($post['descricao']) ?>
                                 </p>
                             </div>
