@@ -131,6 +131,11 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
                 <a href="auth/logout.php" class="perfil-sair-btn">Sair</a>
             <?php endif; ?>
 
+            <!-- Botão Editar (visível apenas no próprio perfil) -->
+            <?php if ($ehProprioUsuario): ?>
+                <a href="auth/logout.php" class="perfil-editar-btn">Editar Perfil</a>
+            <?php endif; ?>
+
         </header>
 
         <!-- ===== GRID DE POSTS ===== -->
@@ -207,10 +212,10 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
                     <span class="modal-nick">@<?= htmlspecialchars($perfil['nick']) ?></span>
 
                     <?php if ($ehProprioUsuario): ?>
-                    <button class="modal-trash-btn" id="modal-trash-btn"
-                        onclick="deletarPost()" aria-label="Excluir publicação" title="Excluir">
-                        <img src="icon/trash.webp" alt="Excluir">
-                    </button>
+                        <button class="modal-trash-btn" id="modal-trash-btn" onclick="deletarPost()"
+                            aria-label="Excluir publicação" title="Excluir">
+                            <img src="icon/trash.webp" alt="Excluir">
+                        </button>
                     <?php endif; ?>
                 </div>
 
