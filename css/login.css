@@ -30,11 +30,13 @@ body {
 
 /* Logo / Nome do app */
 .login-logo {
+    font-family: 'Capuche Trial', sans-serif;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
     font-size: 2.2rem;
     font-weight: 700;
     letter-spacing: -1px;
     margin-bottom: 32px;
-    color: #262626;
 }
 
 /* Linha divisória "ou" */
