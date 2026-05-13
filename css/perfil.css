@@ -21,7 +21,7 @@ body {
     right: 0;
     z-index: 200;
     background: #ffffff;
-    border-bottom: 2px solid #e8789a;
+    border-bottom: 2px solid #949494;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -102,7 +102,7 @@ body {
     align-items: center;
     gap: 48px;
     padding: 40px 0 36px;
-    border-bottom: 2px solid #e8789a;
+    border-bottom: 2px solid #262626;
     margin-bottom: 44px;
     position: relative;
 }
@@ -127,6 +127,31 @@ body {
 }
 
 .perfil-sair-btn:hover {
+    border-color: #e8789a;
+    color: #e8789a;
+    background: #fff5f8;
+}
+
+/* Botão Editar no canto direito do cabeçalho */
+.perfil-editar-btn {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 20px;
+    border: 1.5px solid #c0c0c0;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #262626;
+    text-decoration: none;
+    background: #ffffff;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.perfil-editar-btn:hover {
     border-color: #e8789a;
     color: #e8789a;
     background: #fff5f8;
@@ -383,7 +408,8 @@ body {
 
 /* Botão de excluir post (lixeira) */
 .modal-trash-btn {
-    margin-left: auto; /* Empurra para o canto direito */
+    margin-left: auto;
+    /* Empurra para o canto direito */
     background: transparent;
     border: none;
     cursor: pointer;
