@@ -62,42 +62,6 @@ try {
 
 <body>
 
-    <style>
-        /* Rodapé de ações do post: abriga o botão de compartilhar */
-        .post-actions {
-            display: flex;
-            justify-content: flex-end;
-            padding: 8px 12px 4px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        /* Botão de compartilhar — ícone genérico ↑ para testes */
-        .btn-share {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.78rem;
-            color: #8e8e8e;
-            padding: 4px 6px;
-            border-radius: 4px;
-            transition: color 0.15s ease, background 0.15s ease;
-        }
-
-        .btn-share:hover {
-            color: #262626;
-            background: #f5f5f5;
-        }
-
-        /* Ícone de seta para cima — símbolo genérico de compartilhar */
-        .btn-share .share-icon {
-            font-size: 1rem;
-            line-height: 1;
-        }
-    </style>
 
     <!-- Barra de navegação fixa no topo -->
     <nav class="navbar">

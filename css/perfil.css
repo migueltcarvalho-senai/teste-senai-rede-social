@@ -1,4 +1,11 @@
-/* ===== RESET E BASE ===== */
+/* =====================================================================
+   PERFIL.CSS — Página de perfil do usuário no SenaiDex
+   Responsável por: navbar, cabeçalho de perfil, grid de posts, modal de foto
+   ===================================================================== */
+
+/* ─── Reset e Base ─────────────────────────────────────────────────── */
+
+/* Garante que padding e border contam dentro da largura total */
 *,
 *::before,
 *::after {
@@ -7,19 +14,22 @@
     padding: 0;
 }
 
+/* Tipografia e fundo base */
 body {
     font-family: 'Inter', sans-serif;
     background: #fafafa;
     color: #262626;
 }
 
-/* ===== NAVBAR ===== */
+/* ─── Navbar fixa no topo ───────────────────────────────────────────── */
+
+/* Barra de navegação fixa: z-index elevado para sobrepor o modal */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 200;
+    z-index: 200;                        /* Acima do modal (z-index 500 tem backdrop) */
     background: #ffffff;
     border-bottom: 2px solid #949494;
     display: flex;
@@ -29,12 +39,14 @@ body {
     height: 54px;
 }
 
-/* Logo à esquerda */
+/* Logo à esquerda com transição de zoom */
 .navbar-logo-img {
     display: flex;
     align-items: center;
     text-decoration: none;
     flex-shrink: 0;
+    transition: transform 0.15s ease;    /* Obrigatório para o hover funcionar */
+    border-radius: 50%;
 }
 
 .navbar-logo-img img {
@@ -42,13 +54,14 @@ body {
     width: 45px;
     object-fit: contain;
     border-radius: 50%;
+    display: block;
 }
 
 .navbar-logo-img:hover {
     transform: scale(1.08);
 }
 
-/* Título central */
+/* Título "SenaiDex" centralizado absolutamente */
 .navbar-brand {
     font-family: 'Capuche Trial', sans-serif;
     font-size: 1.65rem;
@@ -63,7 +76,7 @@ body {
     white-space: nowrap;
 }
 
-/* Avatar do usuário logado à direita */
+/* Avatar do usuário logado */
 .navbar-avatar {
     width: 38px;
     height: 38px;
@@ -86,30 +99,38 @@ body {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
-/* ===== LAYOUT ===== */
+/* ─── Layout da página ───────────────────────────────────────────────── */
+
+/* Container principal: empurra o conteúdo abaixo da navbar */
 .page-wrap {
-    padding-top: 70px;
-    max-width: 935px;
+    padding-top: 70px;                   /* Navbar (54px) + folga (16px) */
+    max-width: 935px;                    /* Largura máxima estilo Instagram desktop */
     margin: 0 auto;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 60px;
 }
 
-/* ===== CABEÇALHO DO PERFIL ===== */
+/* ─── Cabeçalho do perfil ────────────────────────────────────────────── */
+
+/* Linha superior do perfil: avatar grande + informações do usuário */
 .perfil-header {
     display: flex;
     align-items: center;
     gap: 48px;
     padding: 40px 0 36px;
-    border-bottom: 2px solid #262626;
+    border-bottom: 2px solid #e8789a;   /* Linha rosa-coral como divider */
     margin-bottom: 44px;
     position: relative;
+    /* Em mobile a gap diminui — vide @media */
+    flex-wrap: nowrap;
 }
 
-/* Botão Sair no canto direito do cabeçalho */
+/* ─── Botão Sair ────────────────────────────────────────────────────── */
+
+/* Botão "Sair" alinhado ao extremo direito do cabeçalho */
 .perfil-sair-btn {
-    margin-left: auto;
+    margin-left: auto;                   /* Empurra para a direita */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -126,38 +147,16 @@ body {
     flex-shrink: 0;
 }
 
+/* Hover: bordas e texto ficam no rosa-coral da identidade visual */
 .perfil-sair-btn:hover {
     border-color: #e8789a;
     color: #e8789a;
     background: #fff5f8;
 }
 
-/* Botão Editar no canto direito do cabeçalho */
-.perfil-editar-btn {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 7px 20px;
-    border: 1.5px solid #c0c0c0;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #262626;
-    text-decoration: none;
-    background: #ffffff;
-    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
+/* ─── Avatar do perfil ───────────────────────────────────────────────── */
 
-.perfil-editar-btn:hover {
-    border-color: #e8789a;
-    color: #e8789a;
-    background: #fff5f8;
-}
-
-/* Avatar grande com inicial do nick — estilo texturizado */
+/* Avatar grande com inicial do nick: texturizado com camadas de box-shadow */
 .perfil-avatar {
     width: 110px;
     height: 110px;
@@ -171,7 +170,7 @@ body {
     font-weight: 800;
     flex-shrink: 0;
     letter-spacing: -2px;
-    /* Texturização sutil via box-shadow em camadas */
+    /* Texturização sutil via box-shadow em múltiplas camadas */
     box-shadow:
         inset 0 2px 4px rgba(255, 255, 255, 0.15),
         inset 0 -2px 4px rgba(0, 0, 0, 0.3),
@@ -179,21 +178,26 @@ body {
     user-select: none;
 }
 
+/* ─── Informações do perfil ──────────────────────────────────────────── */
+
+/* Coluna de informações: ocupa o espaço restante à direita do avatar */
 .perfil-info {
     flex: 1;
+    min-width: 0;                        /* Evita overflow em textos longos */
 }
 
-/* Nome do usuário em destaque com efeito texturizado */
+/* Wrapper do nome: nick + nome real */
 .perfil-nome-wrap {
     margin-bottom: 16px;
 }
 
+/* Nick do usuário em destaque: letras grandes com efeito de relevo */
 .perfil-nick {
     font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: -1px;
-    /* Efeito texturizado: sombra dupla que simula relevo */
     color: #1a1a1a;
+    /* Sombra dupla que simula textura de relevo */
     text-shadow:
         1px 1px 0px rgba(255, 255, 255, 0.8),
         -1px -1px 0px rgba(0, 0, 0, 0.15),
@@ -201,20 +205,32 @@ body {
     display: block;
     line-height: 1;
     margin-bottom: 4px;
+    /* Evita overflow do nick em telas estreitas */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
+/* Nome real do usuário: menor e em cinza */
 .perfil-nome {
     font-size: 0.95rem;
     font-weight: 400;
     color: #8e8e8e;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Contador de posts */
+/* ─── Estatísticas do perfil ─────────────────────────────────────────── */
+
+/* Linha de contadores (posts, seguidores, etc.) */
 .perfil-stats {
     display: flex;
     gap: 32px;
+    flex-wrap: wrap;
 }
 
+/* Cada estatística: número em cima, rótulo embaixo */
 .stat-item {
     display: flex;
     flex-direction: column;
@@ -222,12 +238,14 @@ body {
     gap: 2px;
 }
 
+/* Número da estatística em negrito */
 .stat-num {
     font-size: 1.2rem;
     font-weight: 700;
     color: #262626;
 }
 
+/* Rótulo da estatística (ex: "posts") */
 .stat-label {
     font-size: 0.8rem;
     color: #8e8e8e;
@@ -240,23 +258,27 @@ body {
     color: #b0b0b0;
 }
 
-/* ===== GRID DE POSTS ===== */
-/* Três colunas como o Instagram */
+/* ─── Grid de posts ──────────────────────────────────────────────────── */
+
+/* Grid de 3 colunas como o Instagram: proporção 1:1 em cada célula */
 .posts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3px;
 }
 
-/* Cada célula do grid é um quadrado clicável */
+/* Cada célula: quadrado clicável com overflow oculto */
 .grid-item {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
-    background: #efefef;
+    background: #efefef;              /* Fundo cinza enquanto a imagem carrega */
+    /* Animação de entrada stagger */
+    animation: fadeInUp 0.3s ease forwards;
 }
 
+/* A imagem preenche a célula com cover */
 .grid-item img {
     width: 100%;
     height: 100%;
@@ -265,11 +287,13 @@ body {
     transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-/* Overlay escuro que aparece no hover com ícone e descrição preview */
+/* ─── Overlay de hover no grid ───────────────────────────────────────── */
+
+/* Overlay escuro que aparece sobre a imagem ao passar o mouse */
 .grid-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0);
+    background: rgba(0, 0, 0, 0);    /* Transparente por padrão */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -279,6 +303,7 @@ body {
     transition: background 0.25s ease, opacity 0.25s ease;
 }
 
+/* Ao hover: imagem escurece e o overlay aparece */
 .grid-item:hover img {
     transform: scale(1.04);
     filter: brightness(0.75);
@@ -289,16 +314,18 @@ body {
     opacity: 1;
 }
 
-/* Ícone de "ver" no hover */
+/* Ícone de "ver" no centro do overlay */
 .grid-overlay-icon {
     font-size: 1.6rem;
     color: #fff;
     line-height: 1;
 }
 
-/* Estado vazio: nenhuma postagem ainda */
+/* ─── Estado vazio do grid ───────────────────────────────────────────── */
+
+/* Mensagem exibida quando o usuário ainda não tem posts */
 .grid-empty {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1;             /* Ocupa as 3 colunas do grid */
     text-align: center;
     padding: 80px 24px;
     color: #8e8e8e;
@@ -311,7 +338,14 @@ body {
     margin-bottom: 8px;
 }
 
-/* ===== MODAL DE FOTO ===== */
+/* ─── Modal de foto ──────────────────────────────────────────────────── */
+
+/*
+   O modal exibe uma foto em tamanho maior com informações à direita.
+   Ele usa opacity + visibility para transição suave de abertura/fechamento.
+*/
+
+/* Backdrop: overlay escuro que cobre toda a tela */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -321,18 +355,19 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    /* Estado fechado: invisível e fora do tab order */
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
-/* Classe que abre o modal */
+/* Classe adicionada pelo JS para abrir o modal */
 .modal-backdrop.aberto {
     opacity: 1;
     visibility: visible;
 }
 
-/* Caixa do modal: foto à esquerda, info à direita */
+/* Caixa do modal: foto à esquerda (flex 1), informações à direita (280px) */
 .modal-box {
     background: #ffffff;
     border-radius: 4px;
@@ -341,16 +376,19 @@ body {
     max-width: 900px;
     width: 100%;
     max-height: 90vh;
-    transform: scale(0.95);
+    transform: scale(0.95);           /* Ligeiramente menor quando fechado */
     transition: transform 0.2s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
+/* Modal aberto: tamanho normal */
 .modal-backdrop.aberto .modal-box {
     transform: scale(1);
 }
 
-/* Lado esquerdo: foto */
+/* ─── Lado esquerdo do modal: foto ───────────────────────────────────── */
+
+/* Container da imagem: fundo preto, cresce para preencher o espaço disponível */
 .modal-foto-wrap {
     flex: 1;
     min-width: 0;
@@ -358,8 +396,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
+/* Imagem exibida em contain (sem corte) para mostrar a foto completa */
 .modal-foto-wrap img {
     width: 100%;
     height: 100%;
@@ -368,24 +408,31 @@ body {
     display: block;
 }
 
-/* Lado direito: cabeçalho + descrição */
+/* ─── Lado direito do modal: informações ─────────────────────────────── */
+
+/* Painel lateral com cabeçalho, corpo e rodapé */
 .modal-info {
     width: 280px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     border-left: 1px solid #dbdbdb;
+    /* Garante que o conteúdo não ultrapasse a altura do modal */
+    max-height: 90vh;
+    overflow: hidden;
 }
 
-/* Cabeçalho do modal com nick e avatar */
+/* Cabeçalho: avatar + nick + botão de excluir */
 .modal-header {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 14px 16px;
     border-bottom: 1px solid #dbdbdb;
+    flex-shrink: 0;                   /* Não encolhe: sempre visível */
 }
 
+/* Avatar mini do autor no modal */
 .modal-avatar {
     width: 32px;
     height: 32px;
@@ -400,16 +447,19 @@ body {
     flex-shrink: 0;
 }
 
+/* Nick do autor no modal */
 .modal-nick {
     font-size: 0.875rem;
     font-weight: 600;
     color: #262626;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Botão de excluir post (lixeira) */
+/* Botão de excluir post (ícone de lixeira) */
 .modal-trash-btn {
     margin-left: auto;
-    /* Empurra para o canto direito */
     background: transparent;
     border: none;
     cursor: pointer;
@@ -419,6 +469,7 @@ body {
     padding: 6px;
     border-radius: 4px;
     transition: background 0.2s ease;
+    flex-shrink: 0;
 }
 
 .modal-trash-btn img {
@@ -429,6 +480,7 @@ body {
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+/* Hover: fundo avermelhado e ícone opaco */
 .modal-trash-btn:hover {
     background: #ffe5e5;
 }
@@ -438,13 +490,14 @@ body {
     transform: scale(1.1);
 }
 
-/* Corpo do modal: descrição */
+/* Corpo do modal: legenda/descrição do post */
 .modal-body {
     padding: 16px;
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto;                 /* Scroll se a legenda for longa */
 }
 
+/* Texto da descrição */
 .modal-descricao {
     font-size: 0.875rem;
     line-height: 1.6;
@@ -455,7 +508,7 @@ body {
     margin-right: 4px;
 }
 
-/* Data no rodapé do modal */
+/* Rodapé do modal: data de publicação */
 .modal-footer {
     padding: 12px 16px;
     border-top: 1px solid #dbdbdb;
@@ -463,14 +516,17 @@ body {
     color: #8e8e8e;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
-/* Botão de fechar o modal (X) */
+/* ─── Botão de fechar o modal ────────────────────────────────────────── */
+
+/* Botão "×" fixo no canto superior direito da viewport */
 .modal-fechar {
     position: fixed;
     top: 20px;
     right: 24px;
-    z-index: 600;
+    z-index: 600;                     /* Acima do backdrop (500) */
     background: none;
     border: none;
     color: #ffffff;
@@ -478,53 +534,76 @@ body {
     cursor: pointer;
     line-height: 1;
     opacity: 0.8;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    /* Garante área clicável confortável */
+    padding: 4px 8px;
 }
 
 .modal-fechar:hover {
     opacity: 1;
+    transform: scale(1.1);
 }
 
-/* ===== RESPONSIVO: tela pequena quebra o modal para coluna única ===== */
+/* ─── Responsivo ─────────────────────────────────────────────────────── */
+
+/* Em telas menores que 680px: quebra o cabeçalho e o modal para coluna única */
 @media (max-width: 680px) {
+
+    /* Cabeçalho do perfil: menos espaçamento lateral */
     .perfil-header {
-        gap: 24px;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 24px 0 24px;
     }
 
+    /* Avatar menor em mobile */
     .perfil-avatar {
         width: 80px;
         height: 80px;
         font-size: 2rem;
     }
 
+    /* Nick menor para caber na tela */
     .perfil-nick {
         font-size: 1.3rem;
     }
 
-    .modal-box {
-        flex-direction: column;
+    /* Botão Sair menor em mobile */
+    .perfil-sair-btn {
+        padding: 6px 14px;
+        font-size: 0.8rem;
     }
 
+    /* Modal em coluna única: foto em cima, informações embaixo */
+    .modal-box {
+        flex-direction: column;
+        max-height: 95vh;
+    }
+
+    /* Painel de informações ocupa toda a largura no mobile */
     .modal-info {
         width: 100%;
         border-left: none;
         border-top: 1px solid #dbdbdb;
+        max-height: 35vh;             /* Limita a altura para deixar espaço para a foto */
+    }
+
+    /* Foto do modal em proporção quadrada no mobile */
+    .modal-foto-wrap {
+        max-height: 55vh;
     }
 }
 
-/* ===== ANIMAÇÃO DE ENTRADA DOS ITENS DO GRID ===== */
+/* ─── Animação de entrada do grid ────────────────────────────────────── */
+
+/* Items do grid entram deslizando de baixo para cima */
 @keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(12px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.grid-item {
-    animation: fadeInUp 0.3s ease forwards;
 }

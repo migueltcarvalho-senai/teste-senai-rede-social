@@ -1,4 +1,11 @@
-/* ===== RESET E BASE ===== */
+/* =====================================================================
+   LOGIN.CSS — Página de autenticação do SenaiDex
+   Responsável por: layout de login, card, formulário, botão Google
+   ===================================================================== */
+
+/* ─── Reset e Base ─────────────────────────────────────────────────── */
+
+/* Garante que padding e border contam dentro da largura total */
 *,
 *::before,
 *::after {
@@ -7,6 +14,7 @@
     padding: 0;
 }
 
+/* Corpo centraliza o card de login tanto vertical quanto horizontalmente */
 body {
     font-family: 'Inter', sans-serif;
     background: #fafafa;
@@ -15,9 +23,13 @@ body {
     justify-content: center;
     min-height: 100vh;
     color: #262626;
+    /* Padding evita que o card toque as bordas em telas muito pequenas */
+    padding: 20px;
 }
 
-/* ===== CARD DE LOGIN ===== */
+/* ─── Card de login ──────────────────────────────────────────────────── */
+
+/* Container principal de login: borda sutil, fundo branco, centralizado */
 .login-card {
     background: #ffffff;
     border: 1px solid #dbdbdb;
@@ -28,18 +40,33 @@ body {
     text-align: center;
 }
 
-/* Logo / Nome do app */
+/* ─── Logo / Nome do app ─────────────────────────────────────────────── */
+
+/* Título "SenaiDex" com fonte Capuche Trial (identidade visual do app) */
 .login-logo {
     font-family: 'Capuche Trial', sans-serif;
     color: #1a1a1a;
-    letter-spacing: 0.5px;
     font-size: 2.2rem;
     font-weight: 700;
     letter-spacing: -1px;
     margin-bottom: 32px;
+    /* Sem cursor de texto: é um título decorativo */
+    user-select: none;
 }
 
-/* Linha divisória "ou" */
+/* ─── Subtítulo de boas-vindas ───────────────────────────────────────── */
+
+/* Texto descritivo abaixo do logo */
+.login-subtitle {
+    color: #8e8e8e;
+    font-size: 0.875rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* ─── Divisória "ou" ─────────────────────────────────────────────────── */
+
+/* Linha horizontal com texto "OU" no centro */
 .divider {
     display: flex;
     align-items: center;
@@ -52,6 +79,7 @@ body {
     letter-spacing: 1px;
 }
 
+/* As linhas horizontais são gerados via pseudo-elementos */
 .divider::before,
 .divider::after {
     content: '';
@@ -60,38 +88,101 @@ body {
     background: #dbdbdb;
 }
 
-/* Texto de boas-vindas */
-.login-subtitle {
-    color: #8e8e8e;
-    font-size: 0.875rem;
-    margin-bottom: 24px;
-    line-height: 1.5;
-}
+/* ─── Botão Google ───────────────────────────────────────────────────── */
 
-/* Container do botão renderizado pelo SDK do Google */
+/* Container do botão renderizado automaticamente pelo SDK do Google */
 .google-btn-wrap {
     display: flex;
     justify-content: center;
     width: 100%;
 }
 
-/* Mensagem de erro caso algo dê errado */
+/* ─── Campos de formulário (se existirem) ────────────────────────────── */
+
+/* Input padrão de texto/email/password */
+.input-field {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: #262626;
+    background: #fafafa;
+    outline: none;
+    margin-bottom: 12px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.input-field:focus {
+    border-color: #a0a0a0;
+    background: #ffffff;
+}
+
+.input-field::placeholder {
+    color: #c7c7c7;
+}
+
+/* Botão de submit do formulário local */
+.btn-login {
+    width: 100%;
+    padding: 10px 12px;
+    background: #262626;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+    margin-bottom: 12px;
+}
+
+.btn-login:hover {
+    background: #444;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+/* ─── Mensagem de erro ───────────────────────────────────────────────── */
+
+/* Container da mensagem de erro ao falhar login */
 .erro-msg {
     background: #fff3cd;
     border: 1px solid #ffc107;
     border-radius: 4px;
-    padding: 10px;
+    padding: 10px 14px;
     font-size: 0.85rem;
     color: #856404;
     margin-top: 16px;
-    display: none;
+    display: none;                    /* JS exibe quando há erro */
+    line-height: 1.5;
+    text-align: left;
 }
 
-/* Rodapé do card */
+/* ─── Rodapé do card ─────────────────────────────────────────────────── */
+
+/* Área inferior com links ou informações adicionais */
 .login-footer {
     margin-top: 24px;
     padding-top: 24px;
     border-top: 1px solid #dbdbdb;
     font-size: 0.8rem;
     color: #8e8e8e;
+    line-height: 1.5;
+}
+
+/* Links no rodapé */
+.login-footer a {
+    color: #262626;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+}
+
+.login-footer a:hover {
+    color: #e8789a;
 }
