@@ -20,6 +20,10 @@ exigirLogin();
 
     <!-- Link com o CSS -->
     <link rel="stylesheet" href="css/nova_postagem.css">
+    <link rel="stylesheet" href="css/editor_imagem.css">
+
+    <!-- Fabric.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.js"></script>
 
 </head>
 
@@ -64,7 +68,93 @@ exigirLogin();
         </div>
 
         <!-- ===================== -->
-        <!-- ESTÁGIO 2: LEGENDA    -->
+        <!-- ESTÁGIO 2: EDIÇÃO     -->
+        <!-- ===================== -->
+        <div class="estagio" id="estagio-edicao">
+            <div class="editor-wrap">
+                <canvas id="canvas-editor"></canvas>
+            </div>
+            
+            <div class="filtros-container">
+                <p class="filtros-titulo">Filtros</p>
+                <div class="filtros-lista">
+                    <!-- Filtro Normal: sem efeitos -->
+                    <button class="btn-filtro ativo" data-filtro="normal">
+                        <span class="icone-filtro">⊘</span>
+                        Normal
+                    </button>
+                    <!-- Filtro Polaroid: tom frio, preset nativo -->
+                    <button class="btn-filtro" data-filtro="polaroid">
+                        <span class="icone-filtro">📷</span>
+                        Polaroid
+                    </button>
+                    <!-- Filtro Sepia: tons castanhos clássicos -->
+                    <button class="btn-filtro" data-filtro="sepia">
+                        <span class="icone-filtro">🍂</span>
+                        Sepia
+                    </button>
+                    <!-- Filtro Kodachrome: paleta vibrante e quente -->
+                    <button class="btn-filtro" data-filtro="kodachrome">
+                        <span class="icone-filtro">🎨</span>
+                        Kodachrome
+                    </button>
+                    <!-- Filtro Contrast: realça contraste -->
+                    <button class="btn-filtro" data-filtro="contrast">
+                        <span class="icone-filtro">◑</span>
+                        Contrast
+                    </button>
+                    <!-- Filtro Brightness: aumenta brilho -->
+                    <button class="btn-filtro" data-filtro="brightness">
+                        <span class="icone-filtro">☀️</span>
+                        Brightness
+                    </button>
+                    <!-- Filtro Greyscale: preto e branco puro -->
+                    <button class="btn-filtro" data-filtro="greyscale">
+                        <span class="icone-filtro">⚫</span>
+                        Greyscale
+                    </button>
+                    <!-- Filtro Brownie: tons quentes analógicos -->
+                    <button class="btn-filtro" data-filtro="brownie">
+                        <span class="icone-filtro">🤎</span>
+                        Brownie
+                    </button>
+                    <!-- Filtro Vintage: desbotado e amarelado -->
+                    <button class="btn-filtro" data-filtro="vintage">
+                        <span class="icone-filtro">🎞️</span>
+                        Vintage
+                    </button>
+                    <!-- Filtro Technicolor: cores vibrantes e saturadas -->
+                    <button class="btn-filtro" data-filtro="technicolor">
+                        <span class="icone-filtro">🌈</span>
+                        Technicolor
+                    </button>
+                    <!-- Filtro Pixelate: efeito de pixel/mosaico -->
+                    <button class="btn-filtro" data-filtro="pixelate">
+                        <span class="icone-filtro">🟦</span>
+                        Pixelate
+                    </button>
+                    <!-- Filtro Blur: desfoque suave e ajustável -->
+                    <button class="btn-filtro" data-filtro="blur">
+                        <span class="icone-filtro">💧</span>
+                        Blur
+                    </button>
+                    <!-- Filtro Bloom: efeito de brilho/glow em áreas claras -->
+                    <button class="btn-filtro" data-filtro="bloom">
+                        <span class="icone-filtro">✨</span>
+                        Bloom
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-avancar" id="btn-avancar-legenda">Avançar →</button>
+            <!-- Volta para a câmera e descarta a imagem atual -->
+            <button class="btn-voltar-camera" onclick="voltarParaCamera()">
+                ← Voltar para câmera
+            </button>
+        </div>
+
+        <!-- ===================== -->
+        <!-- ESTÁGIO 3: LEGENDA    -->
         <!-- ===================== -->
         <div class="estagio" id="estagio-legenda">
 
@@ -83,9 +173,9 @@ exigirLogin();
                 Compartilhar
             </button>
 
-            <!-- Botão para voltar e tirar outra foto -->
-            <button class="btn-voltar-camera" onclick="voltarParaCamera()">
-                ← Voltar para câmera
+            <!-- Botão para voltar para a edição -->
+            <button class="btn-voltar-camera" onclick="voltarParaEdicao()">
+                ← Voltar para edição
             </button>
 
         </div>
@@ -187,18 +277,17 @@ exigirLogin();
         }
 
         /**
-         * Vai para o estágio 2 (legenda) com a foto capturada.
+         * Vai para o estágio 2 (edição) com a foto capturada.
          */
         function usarFoto() {
-            // Coloca a foto capturada no preview do estágio 2
-            previewFoto.src = fotoBase64;
-
             // Troca de estágio
             estagioCamera.classList.remove('ativo');
-            estagioLegenda.classList.add('ativo');
+            document.getElementById('estagio-edicao').classList.add('ativo');
 
-            // Foca no campo de legenda para facilitar a digitação
-            campoLegenda.focus();
+            // Inicia o editor com a foto capturada (em base64)
+            if (typeof iniciarEditor === 'function') {
+                iniciarEditor(fotoBase64);
+            }
         }
 
         /**
@@ -222,11 +311,19 @@ exigirLogin();
         }
 
         /**
-         * Volta do estágio 2 (legenda) para o estágio 1 (câmera).
+         * Volta do estágio 2 (edição) para o estágio 1 (câmera).
          */
         function voltarParaCamera() {
-            estagioLegenda.classList.remove('ativo');
+            document.getElementById('estagio-edicao').classList.remove('ativo');
             estagioCamera.classList.add('ativo');
+        }
+
+        /**
+         * Volta do estágio 3 (legenda) para o estágio 2 (edição).
+         */
+        function voltarParaEdicao() {
+            estagioLegenda.classList.remove('ativo');
+            document.getElementById('estagio-edicao').classList.add('ativo');
         }
 
         /**
@@ -235,8 +332,12 @@ exigirLogin();
         function publicarPost() {
             const legenda = campoLegenda.value.trim();
 
+            // Usa a foto com filtro (window.fotoBase64) definida pelo editor,
+            // ou a foto bruta (fotoBase64) como fallback de segurança
+            const fotoParaEnviar = window.fotoBase64 || fotoBase64;
+
             // Validações básicas
-            if (!fotoBase64) {
+            if (!fotoParaEnviar) {
                 mostrarStatus('Nenhuma foto capturada.', 'erro');
                 return;
             }
@@ -252,7 +353,7 @@ exigirLogin();
 
             // Monta os dados para enviar ao servidor
             const formData = new FormData();
-            formData.append('foto_base64', fotoBase64);
+            formData.append('foto_base64', fotoParaEnviar); // Usa a foto com filtro
             formData.append('descricao', legenda);
 
             // Envia para o endpoint de salvar post
@@ -314,6 +415,7 @@ exigirLogin();
         // Inicia a câmera assim que a página carrega
         iniciarCamera();
     </script>
+    <script src="js/editor_imagem.js"></script>
 
 </body>
 

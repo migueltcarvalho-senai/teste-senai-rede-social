@@ -1,10 +1,10 @@
 <?php
 // Configurações de conexão com o banco de dados MySQL (XAMPP padrão)
 $host = '127.0.0.1';
-$dbname = 'instaSenaiDB';
+$dbname = 'instasenaidb';
 $username = 'root';
 $password = ''; // XAMPP não tem senha por padrão
-$port = "3307";
+$port = "3308";
 try {
     // Cria a conexão usando PDO para mais segurança e flexibilidade
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8", $username, $password);
