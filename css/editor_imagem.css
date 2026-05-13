@@ -1,273 +1,56 @@
 /* =====================================================================
-   EDITOR_IMAGEM.CSS — Estágio 2 de postagem: editor de imagem (Fabric.js)
-   Responsável por: canvas de edição, barra de filtros, painel de sliders
-   NOTA: Este arquivo é importado junto com nova_postagem.css na mesma página.
+   EDITOR_IMAGEM.CSS — Estágio 2: editor de imagem (PixiJS v7)
+   Responsável por: container WebGL, barra de presets, botão Avançar
+   NOTA: Importado junto com nova_postagem.css na mesma página.
    ===================================================================== */
 
-/* ─── Canvas de edição (Fabric.js) ──────────────────────────────────── */
+/* ─── Container do PixiJS ────────────────────────────────────────────── */
 
 /*
-   O Fabric.js cria internamente um wrapper .canvas-container com dois <canvas>
-   sobrepostos. O .editor-wrap garante que este wrapper fique corretamente
-   contido e que o layout não quebre em diferentes tamanhos de tela.
+   O PixiJS monta seu próprio <canvas> WebGL dentro de #pixi-container.
+   Não há .canvas-container intermediário como havia no Fabric.js —
+   o canvas é filho direto do div.
 */
 
-/* Container quadrado que abriga o canvas do Fabric.js */
-.editor-wrap {
-    margin: 24px 0 16px;
-    background: #1a1a1a;             /* Fundo escuro para contraste com a imagem */
+/* Container quadrado que abriga o canvas WebGL do PixiJS */
+#pixi-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;            /* Proporção quadrada, igual ao feed */
+    background: #1a1a1a;             /* Fundo escuro enquanto a textura carrega */
     border-radius: 6px;
     overflow: hidden;
-    aspect-ratio: 1 / 1;            /* Proporção quadrada consistente com o feed */
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
-    /* Garante que o canvas nunca transborde horizontalmente */
-    width: 100%;
-    max-width: 100%;
-}
-
-/*
-   Override do wrapper interno gerado pelo Fabric.js (.canvas-container):
-   - Centraliza o wrapper dentro do .editor-wrap
-   - Impede que ele transborde (especialmente em viewports estreitas)
-*/
-.editor-wrap .canvas-container {
-    margin: 0 auto;
-    max-width: 100% !important;       /* Sobrescreve o estilo inline do Fabric */
-    max-height: 100% !important;
-    /* O Fabric define width/height via JS; garantimos que não vaze */
-    overflow: hidden;
-}
-
-/*
-   Os dois <canvas> do Fabric.js (.upper-canvas e o canvas base) também
-   precisam respeitar a largura máxima do container:
-*/
-.editor-wrap canvas {
-    max-width: 100%;
-    height: auto !important;         /* Ajusta altura proporcionalmente */
-}
-
-/* ─── Painel de sliders ──────────────────────────────────────────────── */
-
-/*
-   O painel de sliders aparece ao ativar um filtro paramétrico (Brightness,
-   Contrast, Pixelate, Blur, Bloom). Ele lista um grupo por filtro ativo,
-   cada grupo com seus sliders de controle.
-*/
-
-/* Container principal do painel: aparece/some via classe .oculto */
-.painel-sliders {
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 4px 0;                  /* Padding vertical gerenciado pelos grupos */
-    margin-bottom: 16px;
-    animation: fadeSlideDown 0.2s ease;
-    overflow: hidden;
-}
-
-/* Estado oculto: removido do fluxo pelo JS */
-.painel-sliders.oculto {
-    display: none;
-}
-
-/* Animação de entrada suave do painel ao aparecer */
-@keyframes fadeSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ─── Grupo de filtro ────────────────────────────────────────────────── */
-
-/* Container de um único filtro paramétrico ativo com seus sliders */
-.slider-grupo-filtro {
-    padding: 12px 16px;
-    border-bottom: 1px solid #e8e8e8; /* Separador entre grupos distintos */
-}
-
-/* Remove a borda do último grupo para evitar borda dupla com o container */
-.slider-grupo-filtro:last-child {
-    border-bottom: none;
-}
-
-/* Cabeçalho do grupo: nome do filtro à esquerda, botão de remover à direita */
-.slider-grupo-cabecalho {
+    margin: 24px 0 16px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    justify-content: center;
 }
 
-/* Nome do filtro em maiúsculas — identifica o grupo de sliders */
-.slider-grupo-titulo {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #262626;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+/*
+   O canvas WebGL criado pelo PixiJS via JS:
+   Deve preencher o container por completo sem transbordar.
+   PixiJS define width/height via atributos — garantimos que
+   o CSS não conflite com o tamanho calculado.
+*/
+#pixi-container canvas {
+    display: block;
+    /* Não definimos width/height fixos aqui — o PixiJS controla isso.
+       max-width garante que nunca transborde o container. */
+    max-width: 100%;
+    max-height: 100%;
 }
 
-/* Botão "×" de remover filtro: discreto, torna-se vermelho ao hover */
-.btn-remover-filtro {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #aaa;
-    font-size: 1.1rem;
-    line-height: 1;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: color 0.15s ease, background 0.15s ease;
-    font-family: 'Inter', sans-serif;
-}
+/* ─── Barra horizontal de presets ───────────────────────────────────── */
 
-.btn-remover-filtro:hover {
-    color: #e53935;
-    background: #fce4e4;
-}
-
-/* ─── Controle individual de slider ─────────────────────────────────── */
-
-/* Wrapper de um único controle: label + valor + input range */
-.slider-grupo {
-    margin-bottom: 10px;
-}
-
-.slider-grupo:last-child {
-    margin-bottom: 0;
-}
-
-/* Linha de cabeçalho do slider: rótulo à esquerda, valor atual à direita */
-.slider-cabecalho {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-/* Rótulo do slider (ex: "Contraste", "Brilho") */
-.slider-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #555;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-/* Badge com o valor numérico atual do slider (ex: "0.30", "12") */
-.slider-valor {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #262626;
-    background: #e8e8e8;
-    padding: 2px 8px;
-    border-radius: 20px;
-    min-width: 42px;
-    text-align: center;
-    /* Garante que largura suficiente para qualquer valor */
-    white-space: nowrap;
-}
-
-/* ─── Estilização do input[type=range] ──────────────────────────────── */
-
-/* Remove o estilo padrão do navegador para aplicar o tema personalizado */
-.slider-range {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 4px;
-    border-radius: 2px;
-    /*
-       Track com gradiente dinâmico: a parte antes do thumb fica azul,
-       a parte depois fica cinza. Os valores CSS custom --val, --min, --max
-       são atualizados pelo JS a cada mudança de valor.
-    */
-    background: linear-gradient(
-        to right,
-        #0095f6 0%,
-        #0095f6 calc(
-            (var(--val, 50) - var(--min, 0)) /
-            (var(--max, 100) - var(--min, 0)) * 100%
-        ),
-        #d8d8d8 calc(
-            (var(--val, 50) - var(--min, 0)) /
-            (var(--max, 100) - var(--min, 0)) * 100%
-        ),
-        #d8d8d8 100%
-    );
-    outline: none;
-    cursor: pointer;
-}
-
-/* ─ Thumb (bolinha arrastável) — WebKit/Blink (Chrome, Edge, Safari) ─ */
-.slider-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 2px solid #0095f6;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-    cursor: grab;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-}
-
-.slider-range::-webkit-slider-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.2);
-    box-shadow: 0 2px 8px rgba(0, 149, 246, 0.35);
-}
-
-/* ─ Thumb — Firefox ─ */
-.slider-range::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 2px solid #0095f6;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-    cursor: grab;
-    transition: transform 0.1s ease;
-}
-
-.slider-range::-moz-range-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.2);
-}
-
-/* ─ Track — Firefox ─ */
-.slider-range::-moz-range-track {
-    height: 4px;
-    border-radius: 2px;
-    background: #d8d8d8;
-}
-
-.slider-range::-moz-range-progress {
-    height: 4px;
-    border-radius: 2px;
-    background: #0095f6;
-}
-
-/* ─── Barra horizontal de filtros ───────────────────────────────────── */
-
-/* Container que agrupa o título e a lista de filtros */
+/*
+   Container que agrupa o rótulo "Estilo" e a lista de botões de preset.
+   Não há painel de sliders — os presets são de aplicação direta via GPU.
+*/
 .filtros-container {
     margin-bottom: 16px;
 }
 
-/* Rótulo "Filtros" acima da barra de botões */
+/* Rótulo "Estilo" acima da barra de botões */
 .filtros-titulo {
     font-family: 'Inter', sans-serif;
     font-size: 0.78rem;
@@ -279,22 +62,20 @@
 }
 
 /*
-   Lista de filtros com scroll horizontal:
-   permite muitos filtros sem quebrar o layout em telas estreitas
+   Lista de presets com scroll horizontal.
+   Permite exibir muitos presets sem quebrar o layout em telas estreitas.
 */
 .filtros-lista {
     display: flex;
     gap: 10px;
     overflow-x: auto;
     padding-bottom: 8px;
-    /* Scrollbar personalizada: fina e discreta */
     scrollbar-width: thin;
     scrollbar-color: #dbdbdb transparent;
-    /* Evita que o scroll vertical da página capture o gesto horizontal */
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; /* Scroll suave em iOS */
 }
 
-/* Scrollbar customizada para WebKit */
+/* Scrollbar fina e discreta para WebKit */
 .filtros-lista::-webkit-scrollbar {
     height: 4px;
 }
@@ -308,9 +89,12 @@
     background: transparent;
 }
 
-/* ─── Botão individual de filtro ─────────────────────────────────────── */
+/* ─── Botão individual de preset ─────────────────────────────────────── */
 
-/* Cada filtro é um botão vertical: ícone em cima, nome embaixo */
+/*
+   Cada preset é um botão vertical: ícone emoji em cima, label embaixo.
+   O estado ativo é comunicado visualmente pelo ícone (borda azul).
+*/
 .btn-filtro {
     display: flex;
     flex-direction: column;
@@ -323,27 +107,27 @@
     font-size: 0.72rem;
     color: #8e8e8e;
     transition: color 0.2s ease, transform 0.15s ease;
-    min-width: 58px;                 /* Largura mínima para o texto não ser cortado */
-    flex-shrink: 0;                  /* Não encolhe na lista horizontal */
+    min-width: 58px;
+    flex-shrink: 0;
     padding: 4px 0 2px;
     border-radius: 4px;
 }
 
-/* Hover: texto escurece e o botão sobe levemente */
+/* Hover: texto escurece e botão sobe levemente */
 .btn-filtro:hover {
     color: #262626;
     transform: translateY(-2px);
 }
 
-/* Estado ativo: nome do filtro fica em negrito e escuro */
+/* Estado ativo: label fica escuro e em negrito */
 .btn-filtro.ativo {
     color: #262626;
     font-weight: 600;
 }
 
-/* ─── Ícone do filtro ────────────────────────────────────────────────── */
+/* ─── Ícone do preset ────────────────────────────────────────────────── */
 
-/* Círculo que exibe o emoji/ícone representativo de cada filtro */
+/* Círculo com o emoji representativo do preset */
 .icone-filtro {
     font-size: 1.25rem;
     width: 46px;
@@ -353,20 +137,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid transparent;   /* Borda transparente: "reserva espaço" para o ativo */
+    /* Borda transparente reserva espaço para não pular o layout no estado ativo */
+    border: 2px solid transparent;
     transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
 }
 
-/* Ícone ativo: borda azul + fundo azul-claro + leve aumento de escala */
+/* Ativo: borda azul + fundo azul-claro + leve escala */
 .btn-filtro.ativo .icone-filtro {
     border-color: #0095f6;
     background: #e8f5fe;
     transform: scale(1.08);
 }
 
+/* ─── Label do preset ────────────────────────────────────────────────── */
+
+/* Texto abaixo do ícone */
+.preset-label {
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 56px;
+}
+
 /* ─── Botão Avançar ──────────────────────────────────────────────────── */
 
-/* Botão que avança do estágio de edição para o estágio de legenda */
+/* Avança do estágio de edição para o de legenda */
 .btn-avancar {
     width: 100%;
     padding: 12px;

@@ -1,0 +1,228 @@
+========================================================
+PIXISJS FILTER PRESETS - INSTAGRAM STYLE PIPELINE
+========================================================
+Engine: PixiJS (WebGL)
+Use: sprite.filters = presets.name(1.0)
+
+========================================================
+NOTA IMPORTANTE
+========================================================
+PixiJS não trabalha com “filtros únicos como Instagram”.
+O resultado profissional vem de PIPELINES:
+
+- ColorMatrix (base look)
+- Bloom (luz realista)
+- Noise (film grain)
+- Blur (soft depth)
+- LUT (color grading avançado - opcional)
+
+========================================================
+BASE HELPERS
+========================================================
+
+function applyMatrix(filter, options = {}) {
+  if (options.contrast) filter.contrast(options.contrast, true);
+  if (options.saturate) filter.saturate(options.saturate, true);
+  if (options.brightness) filter.brightness(options.brightness, true);
+  if (options.hue) filter.hue(options.hue, true);
+}
+
+========================================================
+1. WARM VINTAGE
+========================================================
+Look: quente, pele bonita, leve fade
+
+presets.warmVintage = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.1 + 0.05 * i,
+    saturate: 1.05 + 0.1 * i,
+    hue: 3 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.AdvancedBloomFilter({
+      threshold: 0.7,
+      bloomScale: 0.2 * i,
+      brightness: 1
+    }),
+    new PIXI.filters.NoiseFilter(0.04 * i)
+  ];
+};
+
+========================================================
+2. COOL CINEMATIC
+========================================================
+Look: azul, moderno, tech, night vibe
+
+presets.coolCinematic = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.15 + 0.08 * i,
+    saturate: 0.95,
+    hue: -8 * i,
+    brightness: -0.02 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.AdvancedBloomFilter({
+      threshold: 0.75,
+      bloomScale: 0.18 * i
+    }),
+    new PIXI.filters.NoiseFilter(0.03 * i)
+  ];
+};
+
+========================================================
+3. GOLDEN HOUR
+========================================================
+Look: viral Instagram, dourado, quente forte
+
+presets.goldenHour = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.2 + 0.05 * i,
+    saturate: 1.15 + 0.15 * i,
+    hue: 2 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.AdvancedBloomFilter({
+      threshold: 0.65,
+      bloomScale: 0.28 * i
+    }),
+    new PIXI.filters.NoiseFilter(0.05 * i)
+  ];
+};
+
+========================================================
+4. SOFT BEAUTY
+========================================================
+Look: suavização leve, estética de selfie
+
+presets.softBeauty = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.05,
+    saturate: 1.05
+  });
+
+  return [
+    new PIXI.filters.BlurFilter(0.8 * i),
+    cm,
+    new PIXI.filters.NoiseFilter(0.02 * i)
+  ];
+};
+
+========================================================
+5. FILM LOOK
+========================================================
+Look: cinema, grain, contraste controlado
+
+presets.filmLook = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.18,
+    saturate: 0.95,
+    hue: -2 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.NoiseFilter(0.08 * i),
+    new PIXI.filters.AdvancedBloomFilter({
+      threshold: 0.8,
+      bloomScale: 0.12 * i
+    })
+  ];
+};
+
+========================================================
+6. VIBRANT POP (TIKTOK STYLE)
+========================================================
+Look: cores fortes, impacto alto
+
+presets.vibrantPop = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.3 + 0.1 * i,
+    saturate: 1.35 + 0.2 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.AdvancedBloomFilter({
+      threshold: 0.6,
+      bloomScale: 0.32 * i
+    })
+  ];
+};
+
+========================================================
+7. DARK MOODY
+========================================================
+Look: escuro, dramático, cinematográfico
+
+presets.darkMoody = (i = 1) => {
+  const cm = new PIXI.filters.ColorMatrixFilter();
+
+  applyMatrix(cm, {
+    contrast: 1.35 + 0.1 * i,
+    brightness: -0.05 * i,
+    saturate: 0.85,
+    hue: -4 * i
+  });
+
+  return [
+    cm,
+    new PIXI.filters.NoiseFilter(0.06 * i)
+  ];
+};
+
+========================================================
+USO
+========================================================
+
+// exemplo:
+sprite.filters = presets.goldenHour(1.0);
+
+========================================================
+ARQUITETURA RECOMENDADA
+========================================================
+
+Imagem
+  ↓
+ColorMatrix (base look)
+  ↓
+Bloom (luz)
+  ↓
+Noise (film grain)
+  ↓
+Blur leve (depth)
+  ↓
+EXPORT
+
+========================================================
+EXTENSÃO PROFISSIONAL (OPCIONAL)
+========================================================
+
+Para nível Instagram real:
+
+- LUT (.cube)
+- GLSL fragment shaders
+- ACES tone mapping
+- local contrast shader
+- sharpen (unsharp mask)
+
+========================================================
+FIM
+========================================================

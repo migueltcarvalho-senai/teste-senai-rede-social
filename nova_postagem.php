@@ -22,8 +22,10 @@ exigirLogin();
     <link rel="stylesheet" href="css/nova_postagem.css">
     <link rel="stylesheet" href="css/editor_imagem.css">
 
-    <!-- Fabric.js via CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.js"></script>
+    <!-- PixiJS v7 — renderer WebGL para o editor de imagem -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.3/dist/pixi.min.js"></script>
+    <!-- pixi-filters v5 — filtros extras (blur, noise, pixelate, etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi-filters@5.3.3/dist/browser/pixi-filters.js"></script>
 
 </head>
 
@@ -82,79 +84,20 @@ exigirLogin();
         <!-- ESTÁGIO 2: EDIÇÃO     -->
         <!-- ===================== -->
         <div class="estagio" id="estagio-edicao">
-            <div class="editor-wrap">
-                <canvas id="canvas-editor"></canvas>
-            </div>
+            <!--
+                O PixiJS monta dinamicamente um <canvas> WebGL aqui via JS.
+                NÃO coloque um <canvas> estático — o PixiJS cria e gerencia o seu próprio.
+            -->
+            <div id="pixi-container"></div>
             
             <div class="filtros-container">
-                <p class="filtros-titulo">Filtros</p>
-                <div class="filtros-lista">
-                    <!-- Filtro Normal: sem efeitos -->
-                    <button class="btn-filtro ativo" data-filtro="normal">
-                        <span class="icone-filtro">⊘</span>
-                        Normal
-                    </button>
-                    <!-- Filtro Polaroid: tom frio, preset nativo -->
-                    <button class="btn-filtro" data-filtro="polaroid">
-                        <span class="icone-filtro">📷</span>
-                        Polaroid
-                    </button>
-                    <!-- Filtro Sepia: tons castanhos clássicos -->
-                    <button class="btn-filtro" data-filtro="sepia">
-                        <span class="icone-filtro">🍂</span>
-                        Sepia
-                    </button>
-                    <!-- Filtro Kodachrome: paleta vibrante e quente -->
-                    <button class="btn-filtro" data-filtro="kodachrome">
-                        <span class="icone-filtro">🎨</span>
-                        Kodachrome
-                    </button>
-                    <!-- Filtro Contrast: realça contraste -->
-                    <button class="btn-filtro" data-filtro="contrast">
-                        <span class="icone-filtro">◑</span>
-                        Contrast
-                    </button>
-                    <!-- Filtro Brightness: aumenta brilho -->
-                    <button class="btn-filtro" data-filtro="brightness">
-                        <span class="icone-filtro">☀️</span>
-                        Brightness
-                    </button>
-                    <!-- Filtro Greyscale: preto e branco puro -->
-                    <button class="btn-filtro" data-filtro="greyscale">
-                        <span class="icone-filtro">⚫</span>
-                        Greyscale
-                    </button>
-                    <!-- Filtro Brownie: tons quentes analógicos -->
-                    <button class="btn-filtro" data-filtro="brownie">
-                        <span class="icone-filtro">🤎</span>
-                        Brownie
-                    </button>
-                    <!-- Filtro Vintage: desbotado e amarelado -->
-                    <button class="btn-filtro" data-filtro="vintage">
-                        <span class="icone-filtro">🎞️</span>
-                        Vintage
-                    </button>
-                    <!-- Filtro Technicolor: cores vibrantes e saturadas -->
-                    <button class="btn-filtro" data-filtro="technicolor">
-                        <span class="icone-filtro">🌈</span>
-                        Technicolor
-                    </button>
-                    <!-- Filtro Pixelate: efeito de pixel/mosaico -->
-                    <button class="btn-filtro" data-filtro="pixelate">
-                        <span class="icone-filtro">🟦</span>
-                        Pixelate
-                    </button>
-                    <!-- Filtro Blur: desfoque suave e ajustável -->
-                    <button class="btn-filtro" data-filtro="blur">
-                        <span class="icone-filtro">💧</span>
-                        Blur
-                    </button>
-                    <!-- Filtro Bloom: efeito de brilho/glow em áreas claras -->
-                    <button class="btn-filtro" data-filtro="bloom">
-                        <span class="icone-filtro">✨</span>
-                        Bloom
-                    </button>
-                </div>
+                <!-- Rótulo da barra de presets de estilo -->
+                <p class="filtros-titulo">Estilo</p>
+                <!--
+                    Os botões de preset são gerados dinamicamente pelo editor_imagem.js
+                    via _construirBarraPresets(). Não adicione botões aqui manualmente.
+                -->
+                <div class="filtros-lista" id="filtros-lista"></div>
             </div>
 
             <button class="btn-avancar" id="btn-avancar-legenda">Avançar →</button>
