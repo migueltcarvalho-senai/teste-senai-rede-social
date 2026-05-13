@@ -1,65 +1,105 @@
-/* ===================================================================
-   EDITOR DE IMAGEM — Estilos do estágio de edição (Fabric.js)
-   =================================================================== */
+/* =====================================================================
+   EDITOR_IMAGEM.CSS — Estágio 2 de postagem: editor de imagem (Fabric.js)
+   Responsável por: canvas de edição, barra de filtros, painel de sliders
+   NOTA: Este arquivo é importado junto com nova_postagem.css na mesma página.
+   ===================================================================== */
 
-/* ─── Canvas de edição ─────────────────────────────────────── */
+/* ─── Canvas de edição (Fabric.js) ──────────────────────────────────── */
+
+/*
+   O Fabric.js cria internamente um wrapper .canvas-container com dois <canvas>
+   sobrepostos. O .editor-wrap garante que este wrapper fique corretamente
+   contido e que o layout não quebre em diferentes tamanhos de tela.
+*/
 
 /* Container quadrado que abriga o canvas do Fabric.js */
 .editor-wrap {
     margin: 24px 0 16px;
-    background: #1a1a1a;
+    background: #1a1a1a;             /* Fundo escuro para contraste com a imagem */
     border-radius: 6px;
     overflow: hidden;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1;            /* Proporção quadrada consistente com o feed */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    /* Garante que o canvas nunca transborde horizontalmente */
+    width: 100%;
+    max-width: 100%;
 }
 
-/* O Fabric.js cria um wrapper .canvas-container internamente;
-   este override garante que ele não transborde o .editor-wrap */
-.canvas-container {
+/*
+   Override do wrapper interno gerado pelo Fabric.js (.canvas-container):
+   - Centraliza o wrapper dentro do .editor-wrap
+   - Impede que ele transborde (especialmente em viewports estreitas)
+*/
+.editor-wrap .canvas-container {
     margin: 0 auto;
+    max-width: 100% !important;       /* Sobrescreve o estilo inline do Fabric */
+    max-height: 100% !important;
+    /* O Fabric define width/height via JS; garantimos que não vaze */
+    overflow: hidden;
 }
 
-/* ─── Painel de sliders ────────────────────────────────────── */
+/*
+   Os dois <canvas> do Fabric.js (.upper-canvas e o canvas base) também
+   precisam respeitar a largura máxima do container:
+*/
+.editor-wrap canvas {
+    max-width: 100%;
+    height: auto !important;         /* Ajusta altura proporcionalmente */
+}
 
-/* Container principal: agrega todos os grupos de filtros paramétricos ativos */
+/* ─── Painel de sliders ──────────────────────────────────────────────── */
+
+/*
+   O painel de sliders aparece ao ativar um filtro paramétrico (Brightness,
+   Contrast, Pixelate, Blur, Bloom). Ele lista um grupo por filtro ativo,
+   cada grupo com seus sliders de controle.
+*/
+
+/* Container principal do painel: aparece/some via classe .oculto */
 .painel-sliders {
     background: #f5f5f5;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 4px 0;  /* Padding vertical gerenciado pelos grupos internos */
+    padding: 4px 0;                  /* Padding vertical gerenciado pelos grupos */
     margin-bottom: 16px;
     animation: fadeSlideDown 0.2s ease;
     overflow: hidden;
 }
 
-/* Estado oculto */
+/* Estado oculto: removido do fluxo pelo JS */
 .painel-sliders.oculto {
     display: none;
 }
 
-/* Animação de entrada do painel */
+/* Animação de entrada suave do painel ao aparecer */
 @keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0);    }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Grupo de sliders de um único filtro paramétrico ativo */
+/* ─── Grupo de filtro ────────────────────────────────────────────────── */
+
+/* Container de um único filtro paramétrico ativo com seus sliders */
 .slider-grupo-filtro {
     padding: 12px 16px;
-    /* Linha separadora entre grupos distintos */
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8; /* Separador entre grupos distintos */
 }
 
-/* Remove a borda do último grupo */
+/* Remove a borda do último grupo para evitar borda dupla com o container */
 .slider-grupo-filtro:last-child {
     border-bottom: none;
 }
 
-/* Cabeçalho do grupo: nome do filtro à esquerda, botão × à direita */
+/* Cabeçalho do grupo: nome do filtro à esquerda, botão de remover à direita */
 .slider-grupo-cabecalho {
     display: flex;
     justify-content: space-between;
@@ -67,7 +107,7 @@
     margin-bottom: 10px;
 }
 
-/* Nome do filtro no cabeçalho do grupo */
+/* Nome do filtro em maiúsculas — identifica o grupo de sliders */
 .slider-grupo-titulo {
     font-family: 'Inter', sans-serif;
     font-size: 0.78rem;
@@ -77,7 +117,7 @@
     letter-spacing: 0.05em;
 }
 
-/* Botão de remover filtro (×) */
+/* Botão "×" de remover filtro: discreto, torna-se vermelho ao hover */
 .btn-remover-filtro {
     background: none;
     border: none;
@@ -85,9 +125,9 @@
     color: #aaa;
     font-size: 1.1rem;
     line-height: 1;
-    padding: 2px 4px;
+    padding: 2px 6px;
     border-radius: 4px;
-    transition: color 0.15s, background 0.15s;
+    transition: color 0.15s ease, background 0.15s ease;
     font-family: 'Inter', sans-serif;
 }
 
@@ -96,7 +136,9 @@
     background: #fce4e4;
 }
 
-/* Container de um único controle (label + valor + slider) */
+/* ─── Controle individual de slider ─────────────────────────────────── */
+
+/* Wrapper de um único controle: label + valor + input range */
 .slider-grupo {
     margin-bottom: 10px;
 }
@@ -105,7 +147,7 @@
     margin-bottom: 0;
 }
 
-/* Linha superior do slider: label à esquerda, valor atual à direita */
+/* Linha de cabeçalho do slider: rótulo à esquerda, valor atual à direita */
 .slider-cabecalho {
     display: flex;
     justify-content: space-between;
@@ -123,7 +165,7 @@
     letter-spacing: 0.04em;
 }
 
-/* Valor numérico atual do slider (ex: "0.30", "12") */
+/* Badge com o valor numérico atual do slider (ex: "0.30", "12") */
 .slider-valor {
     font-family: 'Inter', sans-serif;
     font-size: 0.82rem;
@@ -134,18 +176,24 @@
     border-radius: 20px;
     min-width: 42px;
     text-align: center;
+    /* Garante que largura suficiente para qualquer valor */
+    white-space: nowrap;
 }
 
-/* ─── Estilização do input[type=range] ─────────────────────── */
+/* ─── Estilização do input[type=range] ──────────────────────────────── */
 
-/* Remove o estilo nativo do navegador para aplicar o custom */
+/* Remove o estilo padrão do navegador para aplicar o tema personalizado */
 .slider-range {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
     height: 4px;
     border-radius: 2px;
-    /* Track com gradiente: começa cinza e vai até o ponto atual (azul) */
+    /*
+       Track com gradiente dinâmico: a parte antes do thumb fica azul,
+       a parte depois fica cinza. Os valores CSS custom --val, --min, --max
+       são atualizados pelo JS a cada mudança de valor.
+    */
     background: linear-gradient(
         to right,
         #0095f6 0%,
@@ -163,7 +211,7 @@
     cursor: pointer;
 }
 
-/* Thumb (bolinha arrastável) — WebKit/Blink (Chrome, Edge, Safari) */
+/* ─ Thumb (bolinha arrastável) — WebKit/Blink (Chrome, Edge, Safari) ─ */
 .slider-range::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 18px;
@@ -182,7 +230,7 @@
     box-shadow: 0 2px 8px rgba(0, 149, 246, 0.35);
 }
 
-/* Thumb — Firefox */
+/* ─ Thumb — Firefox ─ */
 .slider-range::-moz-range-thumb {
     width: 18px;
     height: 18px;
@@ -191,6 +239,7 @@
     border: 2px solid #0095f6;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
     cursor: grab;
+    transition: transform 0.1s ease;
 }
 
 .slider-range::-moz-range-thumb:active {
@@ -198,7 +247,7 @@
     transform: scale(1.2);
 }
 
-/* Track — Firefox (aparência personalizada) */
+/* ─ Track — Firefox ─ */
 .slider-range::-moz-range-track {
     height: 4px;
     border-radius: 2px;
@@ -211,13 +260,14 @@
     background: #0095f6;
 }
 
-/* ─── Barra de filtros ─────────────────────────────────────── */
+/* ─── Barra horizontal de filtros ───────────────────────────────────── */
 
+/* Container que agrupa o título e a lista de filtros */
 .filtros-container {
     margin-bottom: 16px;
 }
 
-/* Título da seção de filtros */
+/* Rótulo "Filtros" acima da barra de botões */
 .filtros-titulo {
     font-family: 'Inter', sans-serif;
     font-size: 0.78rem;
@@ -228,17 +278,23 @@
     margin-bottom: 10px;
 }
 
-/* Lista horizontal com scroll — permite muitos filtros sem quebrar layout */
+/*
+   Lista de filtros com scroll horizontal:
+   permite muitos filtros sem quebrar o layout em telas estreitas
+*/
 .filtros-lista {
     display: flex;
     gap: 10px;
     overflow-x: auto;
     padding-bottom: 8px;
-    /* Esconde scrollbar mas mantém funcionalidade */
+    /* Scrollbar personalizada: fina e discreta */
     scrollbar-width: thin;
     scrollbar-color: #dbdbdb transparent;
+    /* Evita que o scroll vertical da página capture o gesto horizontal */
+    -webkit-overflow-scrolling: touch;
 }
 
+/* Scrollbar customizada para WebKit */
 .filtros-lista::-webkit-scrollbar {
     height: 4px;
 }
@@ -248,7 +304,13 @@
     border-radius: 2px;
 }
 
-/* Botão individual de filtro */
+.filtros-lista::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ─── Botão individual de filtro ─────────────────────────────────────── */
+
+/* Cada filtro é um botão vertical: ícone em cima, nome embaixo */
 .btn-filtro {
     display: flex;
     flex-direction: column;
@@ -260,25 +322,28 @@
     font-family: 'Inter', sans-serif;
     font-size: 0.72rem;
     color: #8e8e8e;
-    transition: color 0.2s, transform 0.1s;
-    /* Largura mínima para o texto não ser cortado */
-    min-width: 58px;
-    flex-shrink: 0;
-    padding: 4px 0;
+    transition: color 0.2s ease, transform 0.15s ease;
+    min-width: 58px;                 /* Largura mínima para o texto não ser cortado */
+    flex-shrink: 0;                  /* Não encolhe na lista horizontal */
+    padding: 4px 0 2px;
+    border-radius: 4px;
 }
 
+/* Hover: texto escurece e o botão sobe levemente */
 .btn-filtro:hover {
     color: #262626;
     transform: translateY(-2px);
 }
 
-/* Estado ativo: texto escuro e ícone com borda azul */
+/* Estado ativo: nome do filtro fica em negrito e escuro */
 .btn-filtro.ativo {
     color: #262626;
     font-weight: 600;
 }
 
-/* Círculo que contém o emoji/ícone do filtro */
+/* ─── Ícone do filtro ────────────────────────────────────────────────── */
+
+/* Círculo que exibe o emoji/ícone representativo de cada filtro */
 .icone-filtro {
     font-size: 1.25rem;
     width: 46px;
@@ -288,21 +353,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid transparent;
-    /* Transição suave ao ativar */
-    transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
+    border: 2px solid transparent;   /* Borda transparente: "reserva espaço" para o ativo */
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
 }
 
-/* Ícone ativo: borda azul e fundo levemente colorido */
+/* Ícone ativo: borda azul + fundo azul-claro + leve aumento de escala */
 .btn-filtro.ativo .icone-filtro {
     border-color: #0095f6;
     background: #e8f5fe;
     transform: scale(1.08);
 }
 
-/* ─── Botão Avançar ────────────────────────────────────────── */
+/* ─── Botão Avançar ──────────────────────────────────────────────────── */
 
-/* Botão para ir do editor para a tela de legenda */
+/* Botão que avança do estágio de edição para o estágio de legenda */
 .btn-avancar {
     width: 100%;
     padding: 12px;
@@ -314,10 +378,15 @@
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, transform 0.1s ease;
     margin-bottom: 12px;
+    letter-spacing: 0.2px;
 }
 
 .btn-avancar:hover {
     background: #444;
+}
+
+.btn-avancar:active {
+    transform: scale(0.98);
 }
