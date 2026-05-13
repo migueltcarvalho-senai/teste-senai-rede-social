@@ -31,22 +31,13 @@ exigirLogin();
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <!-- Logo à esquerda -->
-        <a href="index.php" class="navbar-logo-img">
-            <img src="icon/logo.webp" alt="SenaiDex Logo">
-        </a>
-
-        <!-- Título central com fonte Capuche Trial -->
-        <span class="navbar-brand">SenaiDex</span>
-
-        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
-        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
-            aria-label="Meu perfil">
-            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
-        </a>
-    </nav>
+    <?php
+    /**
+     * Inclui o componente reutilizável da navbar.
+     * O próprio componente injeta o link para css/navbar.css automaticamente.
+     */
+    require_once __DIR__ . '/components/navbar.php';
+    ?>
 
     <div class="container">
 
@@ -89,7 +80,7 @@ exigirLogin();
                 NÃO coloque um <canvas> estático — o PixiJS cria e gerencia o seu próprio.
             -->
             <div id="pixi-container"></div>
-            
+
             <div class="filtros-container">
                 <!-- Rótulo da barra de presets de estilo -->
                 <p class="filtros-titulo">Estilo</p>

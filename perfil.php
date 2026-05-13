@@ -76,22 +76,13 @@ $ehProprioUsuario = ($_SESSION['usuario_nick'] === $perfil['nick']);
         .grid-item:nth-child(<?= $i + 1 ?>) { animation-delay: <?= $i * 0.04 ?>s; }
     <?php endfor; ?>
 
-    <!-- Navbar fixa -->
-    <nav class="navbar">
-        <!-- Logo à esquerda -->
-        <a href="index.php" class="navbar-logo-img">
-            <img src="icon/logo.webp" alt="SenaiDex Logo">
-        </a>
-
-        <!-- Título central com fonte Capuche Trial -->
-        <span class="navbar-brand">SenaiDex</span>
-
-        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
-        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
-            aria-label="Meu perfil">
-            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
-        </a>
-    </nav>
+    <?php
+    /**
+     * Inclui o componente reutilizável da navbar.
+     * O próprio componente injeta o link para css/navbar.css automaticamente.
+     */
+    require_once __DIR__ . '/components/navbar.php';
+    ?>
 
     <div class="page-wrap">
 
