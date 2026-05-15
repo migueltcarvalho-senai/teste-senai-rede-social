@@ -1,6 +1,7 @@
 /* =====================================================================
    PERFIL.CSS — Página de perfil do usuário no SenaiDex
-   Responsável por: navbar, cabeçalho de perfil, grid de posts, modal de foto
+   Responsável por: cabeçalho de perfil, grid de posts, modal de foto.
+   Os estilos da navbar estão em css/navbar.css (injetados pelo componente).
    ===================================================================== */
 
 /* ─── Reset e Base ─────────────────────────────────────────────────── */
@@ -21,85 +22,6 @@ body {
     color: #262626;
 }
 
-/* ─── Navbar fixa no topo ───────────────────────────────────────────── */
-
-/* Barra de navegação fixa: z-index elevado para sobrepor o modal */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    /* Acima do modal (z-index 500 tem backdrop) */
-    background: #ffffff;
-    border-bottom: 2px solid #949494;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    height: 54px;
-}
-
-/* Logo à esquerda com transição de zoom */
-.navbar-logo-img {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    flex-shrink: 0;
-    transition: transform 0.15s ease;
-    /* Obrigatório para o hover funcionar */
-    border-radius: 50%;
-}
-
-.navbar-logo-img img {
-    height: 45px;
-    width: 45px;
-    object-fit: contain;
-    border-radius: 50%;
-    display: block;
-}
-
-.navbar-logo-img:hover {
-    transform: scale(1.08);
-}
-
-/* Título "SenaiDex" centralizado absolutamente */
-.navbar-brand {
-    font-family: 'Capuche Trial', sans-serif;
-    font-size: 1.65rem;
-    font-weight: normal;
-    color: #1a1a1a;
-    letter-spacing: 0.5px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-    user-select: none;
-    white-space: nowrap;
-}
-
-/* Avatar do usuário logado */
-.navbar-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #262626 0%, #555 100%);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: 700;
-    text-decoration: none;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.navbar-avatar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-}
 
 /* ─── Layout da página ───────────────────────────────────────────────── */
 

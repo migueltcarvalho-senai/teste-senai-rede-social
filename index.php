@@ -63,22 +63,13 @@ try {
 <body>
 
 
-    <!-- Barra de navegação fixa no topo -->
-    <nav class="navbar">
-        <!-- Logo à esquerda -->
-        <a href="index.php" class="navbar-logo-img">
-            <img src="icon/logo.webp" alt="SenaiDex Logo">
-        </a>
-
-        <!-- Título central com fonte Capuche Trial -->
-        <span class="navbar-brand">SenaiDex</span>
-
-        <!-- Avatar do usuário logado à direita (leva ao perfil) -->
-        <a href="perfil.php?nick=<?= urlencode($_SESSION['usuario_nick']) ?>" class="navbar-avatar"
-            aria-label="Meu perfil">
-            <?= strtoupper(substr($_SESSION['usuario_nick'], 0, 1)) ?>
-        </a>
-    </nav>
+    <?php
+    /**
+     * Inclui o componente reutilizável da navbar.
+     * O próprio componente injeta o link para css/navbar.css automaticamente.
+     */
+    require_once __DIR__ . '/components/navbar.php';
+    ?>
 
     <!-- Layout principal centralizado -->
     <div class="main-layout">
@@ -323,10 +314,10 @@ try {
          * @param {HTMLElement} btn - O botão .btn-share clicado
          */
         async function compartilhar(btn) {
-            const texto       = btn.dataset.texto || '';
-            const url         = btn.dataset.url   || window.location.href;
-            const caminhoFoto = btn.dataset.foto   || '';
-            const nick        = btn.dataset.nick   || '';
+            const texto = btn.dataset.texto || '';
+            const url = btn.dataset.url || window.location.href;
+            const caminhoFoto = btn.dataset.foto || '';
+            const nick = btn.dataset.nick || '';
 
             if (!navigator.share) {
                 alert('Seu navegador não suporta compartilhamento nativo.\nCopie o link: ' + url);
@@ -334,7 +325,7 @@ try {
             }
 
             // Feedback visual
-            const label         = btn.querySelector('.share-label');
+            const label = btn.querySelector('.share-label');
             const textoOriginal = label ? label.textContent : 'Compartilhar';
             btn.disabled = true;
             if (label) label.textContent = 'Gerando imagem...';
@@ -345,16 +336,16 @@ try {
                     const img = new Image();
                     // crossOrigin necessário para poder desenhar no canvas sem "tainted"
                     img.crossOrigin = 'anonymous';
-                    img.onload  = () => resolve(img);
+                    img.onload = () => resolve(img);
                     img.onerror = () => reject(new Error('Não foi possível carregar a imagem.'));
                     img.src = caminhoFoto;
                 });
 
                 // ── 2. Cria canvas com as dimensões da imagem ─────────────────
-                const canvas  = document.createElement('canvas');
-                const largura = imagemOriginal.naturalWidth  || imagemOriginal.width;
-                const altura  = imagemOriginal.naturalHeight || imagemOriginal.height;
-                canvas.width  = largura;
+                const canvas = document.createElement('canvas');
+                const largura = imagemOriginal.naturalWidth || imagemOriginal.width;
+                const altura = imagemOriginal.naturalHeight || imagemOriginal.height;
+                canvas.width = largura;
                 canvas.height = altura;
                 const ctx = canvas.getContext('2d');
 
@@ -364,39 +355,39 @@ try {
                 // ── 4. Gradiente escuro no rodapé (legibilidade do texto) ─────
                 // Altura da faixa: 28% da imagem ou 180px, o que for menor
                 const alturaFaixa = Math.min(Math.round(altura * 0.28), 180);
-                const gradiente   = ctx.createLinearGradient(0, altura - alturaFaixa, 0, altura);
-                gradiente.addColorStop(0,   'rgba(0,0,0,0)');
+                const gradiente = ctx.createLinearGradient(0, altura - alturaFaixa, 0, altura);
+                gradiente.addColorStop(0, 'rgba(0,0,0,0)');
                 gradiente.addColorStop(0.4, 'rgba(0,0,0,0.55)');
-                gradiente.addColorStop(1,   'rgba(0,0,0,0.82)');
+                gradiente.addColorStop(1, 'rgba(0,0,0,0.82)');
                 ctx.fillStyle = gradiente;
                 ctx.fillRect(0, altura - alturaFaixa, largura, alturaFaixa);
 
                 // ── 5. Configurações de texto ─────────────────────────────────
-                const padding     = Math.round(largura * 0.04); // 4% das bordas
-                const tamBase     = Math.max(18, Math.round(largura * 0.042)); // tamanho dinâmico
+                const padding = Math.round(largura * 0.04); // 4% das bordas
+                const tamBase = Math.max(18, Math.round(largura * 0.042)); // tamanho dinâmico
 
                 // Sombra para garantir leitura em qualquer fundo
-                ctx.shadowColor   = 'rgba(0,0,0,0.7)';
-                ctx.shadowBlur    = 6;
+                ctx.shadowColor = 'rgba(0,0,0,0.7)';
+                ctx.shadowBlur = 6;
                 ctx.shadowOffsetX = 1;
                 ctx.shadowOffsetY = 1;
 
                 // ── 5a. Nick do autor (@instaSenai) ──────────────────────────
                 ctx.fillStyle = '#ffffff';
-                ctx.font      = `bold ${tamBase}px Inter, Arial, sans-serif`;
+                ctx.font = `bold ${tamBase}px Inter, Arial, sans-serif`;
                 ctx.textAlign = 'left';
                 const nickTexto = nick ? '@' + nick : '@InstaSenai';
                 ctx.fillText(nickTexto, padding, altura - alturaFaixa + Math.round(tamBase * 1.6));
 
                 // ── 5b. Descrição do post (truncada se longa) ─────────────────
                 if (texto) {
-                    const tamDesc  = Math.round(tamBase * 0.82);
-                    ctx.font       = `${tamDesc}px Inter, Arial, sans-serif`;
-                    ctx.fillStyle  = 'rgba(255,255,255,0.92)';
+                    const tamDesc = Math.round(tamBase * 0.82);
+                    ctx.font = `${tamDesc}px Inter, Arial, sans-serif`;
+                    ctx.fillStyle = 'rgba(255,255,255,0.92)';
 
                     // Trunca a descrição para caber em uma linha
                     const maxLargTexto = largura - padding * 2;
-                    let descTruncada   = texto;
+                    let descTruncada = texto;
                     while (ctx.measureText(descTruncada).width > maxLargTexto && descTruncada.length > 10) {
                         descTruncada = descTruncada.slice(0, -4) + '...';
                     }
@@ -404,9 +395,9 @@ try {
                 }
 
                 // ── 5c. Hashtags fixas no rodapé ──────────────────────────────
-                const tamHash  = Math.round(tamBase * 0.75);
-                ctx.font       = `bold ${tamHash}px Inter, Arial, sans-serif`;
-                ctx.fillStyle  = 'rgba(180,220,255,0.95)'; // azul claro para destacar
+                const tamHash = Math.round(tamBase * 0.75);
+                ctx.font = `bold ${tamHash}px Inter, Arial, sans-serif`;
+                ctx.fillStyle = 'rgba(180,220,255,0.95)'; // azul claro para destacar
                 ctx.fillText('#InstaSenai #SENAI', padding, altura - padding);
 
                 // Remove sombra para não afetar outros desenhos
@@ -429,13 +420,13 @@ try {
                 );
 
                 // ── 7. Compartilha via Web Share API ──────────────────────────
-                const hashtags    = '#InstaSenai #SENAI';
-                const textoShare  = texto ? hashtags + ' ' + texto : hashtags;
+                const hashtags = '#InstaSenai #SENAI';
+                const textoShare = texto ? hashtags + ' ' + texto : hashtags;
 
                 const dadosShare = {
                     files: [arquivoGerado], // imagem com overlay embutido
-                    text:  textoShare,      // pre-preenche WhatsApp / Telegram / SMS
-                    url:   url
+                    text: textoShare,      // pre-preenche WhatsApp / Telegram / SMS
+                    url: url
                 };
 
                 if (navigator.canShare && navigator.canShare(dadosShare)) {

@@ -1,6 +1,7 @@
 /* =====================================================================
    INDEX.CSS — Feed principal do SenaiDex
-   Responsável por: reset, navbar, feed de posts, botão flutuante
+   Responsável por: reset, feed de posts, botão flutuante.
+   Os estilos da navbar estão em css/navbar.css (injetados pelo componente).
    ===================================================================== */
 
 /* ─── Reset e Base ─────────────────────────────────────────────────── */
@@ -21,91 +22,6 @@ body {
     color: #262626;
 }
 
-/* ─── Navbar fixa no topo ───────────────────────────────────────────── */
-
-/* Barra de navegação: posição fixa acima de todo o conteúdo */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    /* Fica acima do conteúdo */
-    background: #ffffff;
-    border-bottom: 2px solid #949494;
-    /* Destaque rosa-coral na borda inferior */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    height: 54px;
-}
-
-/* Logo à esquerda: ícone circular clicável */
-.navbar-logo-img {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    flex-shrink: 0;
-    /* Transition necessária para o hover de scale funcionar suavemente */
-    transition: transform 0.15s ease;
-    border-radius: 50%;
-    /* Mantém área de hover redonda */
-}
-
-.navbar-logo-img img {
-    height: 45px;
-    width: 45px;
-    object-fit: contain;
-    border-radius: 50%;
-    display: block;
-}
-
-/* Efeito de zoom no logo ao passar o mouse */
-.navbar-logo-img:hover {
-    transform: scale(1.08);
-}
-
-/* Título "SenaiDex" centralizado absolutamente na navbar */
-.navbar-brand {
-    font-family: 'Capuche Trial', sans-serif;
-    font-size: 1.65rem;
-    font-weight: normal;
-    color: #1a1a1a;
-    letter-spacing: 0.5px;
-    /* Centralização absoluta em relação à navbar */
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    /* Impede que o título capte cliques ou seja selecionado */
-    pointer-events: none;
-    user-select: none;
-    white-space: nowrap;
-}
-
-/* Avatar do usuário logado à direita: círculo com a inicial do nick */
-.navbar-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #262626 0%, #555 100%);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: 700;
-    text-decoration: none;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Efeito de elevação no avatar ao passar o mouse */
-.navbar-avatar:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-}
 
 /* ─── Layout principal ──────────────────────────────────────────────── */
 

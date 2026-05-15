@@ -1,0 +1,123 @@
+/* =====================================================================
+   NAVBAR.CSS — Barra de navegação global do SenaiDex
+   Fonte única de estilos para o componente components/navbar.php.
+   Este arquivo é incluído automaticamente pelo componente — não é
+   necessário adicioná-lo manualmente ao <head> das páginas.
+   ===================================================================== */
+
+/* ─── Registro da fonte local Capuche Trial ─────────────────────────── */
+
+/*
+ * @font-face instrui o browser a carregar a fonte a partir do servidor.
+ * SEM esta declaração o browser não encontra fontes locais — ele só conhece
+ * as fontes do sistema e as carregadas via Google Fonts / CDN.
+ *
+ * Caminho: o CSS fica em css/, então subimos um nível (../) para chegar
+ * à raiz do projeto e então entramos em fonts/.
+ *
+ * font-display: swap — exibe o texto com a fonte fallback enquanto a
+ * Capuche Trial carrega, evitando FOIT (Flash of Invisible Text).
+ */
+@font-face {
+    font-family: 'Capuche Trial';           /* Nome exato usado no font-family */
+    src: url('../fonts/Capuche Trial.otf') format('opentype'); /* Arquivo OTF local */
+    font-weight: normal;                    /* Peso padrão (regular) */
+    font-style: normal;                     /* Estilo padrão (não-itálico) */
+    font-display: swap;                     /* Evita texto invisível durante o carregamento */
+}
+
+/* ─── Barra de navegação principal ─────────────────────────────────── */
+
+/* Container fixo no topo da viewport, acima de todo o conteúdo */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    /* Acima de todos os outros elementos */
+    background: #ffffff;
+    border-bottom: 2px solid #e8789a;
+    /* Linha de destaque rosa-coral */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 54px;
+}
+
+/* ─── Logo (lado esquerdo) ──────────────────────────────────────────── */
+
+/* Link wrapper do logo: mantém área de clique redonda */
+.navbar-logo-img {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    /* Não comprime em telas pequenas */
+    border-radius: 50%;
+    /* Mantém área de hover circular */
+    transition: transform 0.15s ease;
+}
+
+/* Imagem do logo: circular e contida */
+.navbar-logo-img img {
+    height: 60px;
+    width: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+    display: block;
+}
+
+/* Efeito de zoom suave ao passar o mouse no logo */
+.navbar-logo-img:hover {
+    transform: scale(1.08);
+}
+
+/* ─── Título da marca (centro) ──────────────────────────────────────── */
+
+/* "SenaiDex" centralizado absolutamente dentro da navbar */
+.navbar-brand {
+    font-family: 'Capuche Trial', sans-serif;
+    font-size: 1.65rem;
+    font-weight: normal;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+
+    /* Centralização absoluta em relação ao .navbar */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Impede que o título sobreponha cliques ou seja selecionado */
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
+
+/* ─── Avatar do usuário (lado direito) ──────────────────────────────── */
+
+/* Círculo com a inicial do nick do usuário logado */
+.navbar-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #262626 0%, #555 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    flex-shrink: 0;
+    /* Não comprime em telas pequenas */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Efeito de elevação ao passar o mouse no avatar */
+.navbar-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
