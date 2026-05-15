@@ -75,9 +75,12 @@ try {
             </div>';
         }
 
+        // Sorteia tamanho randômico (20% de chance de ser grande no grid)
+        $sizeClass = (rand(1, 5) == 1) ? 'size-large' : '';
+
         // Cada post é um bloco de HTML com foto, nome do usuário, legenda e (se for o autor) botão de share
         $html .= '
-        <article class="post-card">
+        <article class="post-card ' . $sizeClass . '" onclick="abrirModalPost(this)">
             <div class="post-header">
                 <!-- Avatar clicável leva ao perfil do autor -->
                 <a href="perfil.php?nick=' . urlencode($post['nick_usuario']) . '" style="text-decoration:none;">

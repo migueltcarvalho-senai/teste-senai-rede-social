@@ -93,8 +93,11 @@ try {
                     foreach ($posts as $post):
                         $dataFormatada = date('d/m/Y', strtotime($post['data_criacao']));
                         $inicial = strtoupper(substr($post['nick_usuario'], 0, 1));
+                        
+                        // Sorteia tamanho (20% de chance de ocupar espaço duplo)
+                        $sizeClass = (rand(1, 5) == 1) ? 'size-large' : '';
                         ?>
-                        <article class="post-card">
+                        <article class="post-card <?= $sizeClass ?>" onclick="abrirModalPost(this)">
 
                             <!-- Cabeçalho: avatar + nome + data -->
                             <div class="post-header">
@@ -161,7 +164,32 @@ try {
     <!-- Botão flutuante para criar nova postagem -->
     <a href="nova_postagem.php" class="btn-nova-postagem" title="Nova postagem" id="btn-nova-postagem">+</a>
 
+    <!-- Modal para exibição dos posts no modo Explore -->
+    <div id="modal-post" class="modal-overlay" style="display: none;" onclick="fecharModalPost(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" id="modal-post-content">
+            <!-- Conteúdo injetado via JS -->
+        </div>
+    </div>
+
     <script>
+        function abrirModalPost(card) {
+            const modal = document.getElementById('modal-post');
+            const content = document.getElementById('modal-post-content');
+            
+            // Clona o card e prepara para exibição no modal
+            const clone = card.cloneNode(true);
+            clone.className = 'post-card-modal'; // remove a classe de grid e aplica só a do modal
+            clone.removeAttribute('onclick');
+            
+            content.innerHTML = '';
+            content.appendChild(clone);
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalPost(event) {
+            const modal = document.getElementById('modal-post');
+            modal.style.display = 'none';
+        }
         /**
          * ============================================================
          * LAZY LOAD (Carregamento Infinito)

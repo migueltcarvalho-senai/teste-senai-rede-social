@@ -27,8 +27,10 @@ body {
 
 /* Container principal: empurra o conteúdo abaixo da navbar */
 .page-wrap {
-    padding-top: 70px;                   /* Navbar (54px) + folga (16px) */
-    max-width: 935px;                    /* Largura máxima estilo Instagram desktop */
+    padding-top: 70px;
+    /* Navbar (54px) + folga (16px) */
+    max-width: 935px;
+    /* Largura máxima estilo Instagram desktop */
     margin: 0 auto;
     padding-left: 20px;
     padding-right: 20px;
@@ -43,7 +45,8 @@ body {
     align-items: center;
     gap: 48px;
     padding: 40px 0 36px;
-    border-bottom: 2px solid #e8789a;   /* Linha rosa-coral como divider */
+    border-bottom: 2px solid #000000;
+    /* Linha rosa-coral como divider */
     margin-bottom: 44px;
     position: relative;
     /* Em mobile a gap diminui — vide @media */
@@ -54,7 +57,8 @@ body {
 
 /* Botão "Sair" alinhado ao extremo direito do cabeçalho */
 .perfil-sair-btn {
-    margin-left: auto;                   /* Empurra para a direita */
+    margin-left: auto;
+    /* Empurra para a direita */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +111,8 @@ body {
 /* Coluna de informações: ocupa o espaço restante à direita do avatar */
 .perfil-info {
     flex: 1;
-    min-width: 0;                        /* Evita overflow em textos longos */
+    min-width: 0;
+    /* Evita overflow em textos longos */
 }
 
 /* Wrapper do nome: nick + nome real */
@@ -197,7 +202,8 @@ body {
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
-    background: #efefef;              /* Fundo cinza enquanto a imagem carrega */
+    background: #efefef;
+    /* Fundo cinza enquanto a imagem carrega */
     /* Animação de entrada stagger */
     animation: fadeInUp 0.3s ease forwards;
 }
@@ -217,7 +223,8 @@ body {
 .grid-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0);    /* Transparente por padrão */
+    background: rgba(0, 0, 0, 0);
+    /* Transparente por padrão */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -249,7 +256,8 @@ body {
 
 /* Mensagem exibida quando o usuário ainda não tem posts */
 .grid-empty {
-    grid-column: 1 / -1;             /* Ocupa as 3 colunas do grid */
+    grid-column: 1 / -1;
+    /* Ocupa as 3 colunas do grid */
     text-align: center;
     padding: 80px 24px;
     color: #8e8e8e;
@@ -300,7 +308,8 @@ body {
     max-width: 900px;
     width: 100%;
     max-height: 90vh;
-    transform: scale(0.95);           /* Ligeiramente menor quando fechado */
+    transform: scale(0.95);
+    /* Ligeiramente menor quando fechado */
     transition: transform 0.2s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
@@ -353,7 +362,8 @@ body {
     gap: 10px;
     padding: 14px 16px;
     border-bottom: 1px solid #dbdbdb;
-    flex-shrink: 0;                   /* Não encolhe: sempre visível */
+    flex-shrink: 0;
+    /* Não encolhe: sempre visível */
 }
 
 /* Avatar mini do autor no modal */
@@ -418,7 +428,8 @@ body {
 .modal-body {
     padding: 16px;
     flex: 1;
-    overflow-y: auto;                 /* Scroll se a legenda for longa */
+    overflow-y: auto;
+    /* Scroll se a legenda for longa */
 }
 
 /* Texto da descrição */
@@ -450,7 +461,8 @@ body {
     position: fixed;
     top: 20px;
     right: 24px;
-    z-index: 600;                     /* Acima do backdrop (500) */
+    z-index: 600;
+    /* Acima do backdrop (500) */
     background: none;
     border: none;
     color: #ffffff;
@@ -509,7 +521,8 @@ body {
         width: 100%;
         border-left: none;
         border-top: 1px solid #dbdbdb;
-        max-height: 35vh;             /* Limita a altura para deixar espaço para a foto */
+        max-height: 35vh;
+        /* Limita a altura para deixar espaço para a foto */
     }
 
     /* Foto do modal em proporção quadrada no mobile */
@@ -526,6 +539,7 @@ body {
         opacity: 0;
         transform: translateY(12px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
